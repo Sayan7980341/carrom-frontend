@@ -457,12 +457,14 @@
             z-index: 0; 
         }
 
-        /* 🛡️ FIXED CONFETTI ANIMATION: Now falls infinitely and smoothly */
+        /* 🛡️ FIXED CONFETTI ANIMATION: Now strictly falls infinitely without resetting to default properties */
         .confetti-piece { 
             position: absolute; 
             top: -20px; 
             opacity: 0; 
-            animation: confettiFall infinite linear; 
+            animation-name: confettiFall;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
             border-radius: 2px; 
         }
 
@@ -1631,7 +1633,7 @@
                     updateDoc(doc(db, "users", window.activeTelegramId.toString()), updatePayload).catch(e => console.error(e)); 
                 }
 
-                // 3. INSTANT SCREEN CHANGES (Screen will render BEFORE Alert)
+                // 3. INSTANT SCREEN CHANGES
                 if(gameType === 'spin') { window.updateSpinLimitUI(); }
                 if(gameType === 'reward') { window.renderRewardScreenData(); }
                 if(gameType === 'scratch') { 
@@ -1647,26 +1649,34 @@
                     document.getElementById("tttResetBtn").classList.remove("hidden"); 
                 }
 
-                // 4. DEFERRED ALERT (Allows custom screens to render first)
+                // 4. DEFERRED ALERT (Allows custom screens to fully render first)
+                // 🛡️ INCREASED DELAY to 600ms so that WebView fully paints the screen before alert blocks it.
                 setTimeout(() => {
                     if(gameType === 'spin') { alert(`Won ${amount} Coins!`); }
                     if(gameType === 'reward') { alert(`Claimed ${amount} Coins.`); }
                     if(gameType === 'scratch') { alert(`Won ${amount} Coins!`); }
                     if(gameType === 'ttt') { alert("300 Coins claimed!"); }
                     if(gameType === 'ads_screen') { alert("200 Coins added!"); }
-                }, 150);
+                }, 600); 
 
-                // 5. BACKGROUND SYNC SAFETY (Protects against Vercel hook delays)
+                // 5. BACKGROUND SYNC SAFETY
                 setTimeout(async () => {
                     let optimisticCoins = window.currentCoins;
-                    await window.syncUserProfile(); 
-                    // If Vercel was slow and we fetched an old balance, restore the correct local balance
-                    if (window.currentCoins < optimisticCoins) {
-                        window.currentCoins = optimisticCoins;
-                        window.updateCoinsDisplay();
-                        updateDoc(doc(db, "users", window.activeTelegramId.toString()), { coins: optimisticCoins }).catch(e => console.error(e));
-                    }
-                }, 2500);
+                    try {
+                        const userDocRef = doc(db, "users", window.activeTelegramId.toString());
+                        const userSnapshot = await getDoc(userDocRef);
+                        if (userSnapshot.exists()) {
+                            let dbCoins = userSnapshot.data().coins || 0;
+                            if (dbCoins >= optimisticCoins) {
+                                window.currentCoins = dbCoins;
+                            } else {
+                                window.currentCoins = optimisticCoins;
+                                updateDoc(userDocRef, { coins: optimisticCoins }).catch(e=>console.error(e));
+                            }
+                            window.updateCoinsDisplay();
+                        }
+                    } catch (e) {}
+                }, 3000);
 
             } catch (err) { 
                 console.error("Error updating local UI records:", err);
@@ -1738,12 +1748,33 @@
             
             if (window.AdsgramController) { 
                 window.isAdPlaying = true;
+
+                // 🛡️ PRE-EMPTIVE UI UPDATE: Ad aane se pehle hi background mein success screen lag jayega.
+                // Taki jab ad hate toh direct custom screen dikhe bina kisi flashing ke.
+                if (target === 'scratch') {
+                    document.getElementById('quickScratchBtn').classList.add('hidden');
+                    document.getElementById('scratchCanvas').classList.add('hidden');
+                    document.getElementById('scratchClaimBtn').classList.add('hidden'); 
+                    document.getElementById('scratch-success-view').classList.remove('hidden'); 
+                    document.getElementById('alreadyScratchedBtn').classList.remove('hidden'); 
+                    window.triggerConfetti(); 
+                }
                 
                 window.AdsgramController.show().then(() => {
                     window.isAdPlaying = false;
                     window.executeEarningLogic();
                 }).catch(async () => {
                     window.isAdPlaying = false;
+                    
+                    // REVERT UI: Agar user ad skip karta hai ya ad fail ho jati hai
+                    if (target === 'scratch') {
+                        document.getElementById('quickScratchBtn').classList.remove('hidden');
+                        document.getElementById('scratchCanvas').classList.remove('hidden');
+                        document.getElementById('scratch-success-view').classList.add('hidden'); 
+                        document.getElementById('alreadyScratchedBtn').classList.add('hidden'); 
+                        document.getElementById('scratchConfetti').innerHTML = '';
+                    }
+
                     await setDoc(doc(db, "users", window.activeTelegramId.toString()), { pending_reward: null }, { merge: true });
                     alert("Ad skipped or failed to load!");
                 }); 
