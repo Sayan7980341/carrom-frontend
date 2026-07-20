@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carrom Redeem App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        /* ==========================================
+           0. ROOT VARIABLES (THEME ENGINE)
+           ========================================== */
+        :root {
+            --neon-blue-rgb: 0, 212, 255;
+            --neon-purple-rgb: 181, 0, 255;
+            --gold-rgb: 255, 204, 0;
+            
+            --neon-blue: rgb(var(--neon-blue-rgb));
+            --neon-purple: rgb(var(--neon-purple-rgb));
+            --gold: rgb(var(--gold-rgb));
+            
+            --text-white: #ffffff;
+            --text-gray: #a5aade;
+            
+            --bg-main-top: #10112e;
+            --bg-main-bottom: #05050f;
+            
+            --btn-grad-top: #15163a;
+            --btn-grad-bottom: #0d0d22;
+            --btn-active-top: #1b1d4c;
+            --btn-active-bottom: #0f1028;
+        }
+
+        /* ==========================================
+           1. CORE APPLICATION BASE LAYOUT
+           ========================================== */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body { 
+            background: radial-gradient(circle at top center, var(--bg-main-top) 0%, var(--bg-main-bottom) 100%); 
+            color: var(--text-white); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            position: relative; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            user-select: none; 
+            -webkit-user-select: none; 
+        }
+
+        input, textarea { 
+            user-select: text !important; 
+            -webkit-user-select: text !important; 
+        }
+
+        .hidden { 
+            display: none !important; 
+        }
+
+        /* ==========================================
+           2. COIN ARTWORK AND BADGE COMPONENT SYSTEM
+           ========================================== */
+        .app-coin { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 22px; 
+            height: 22px; 
+            background: radial-gradient(circle at 35% 35%, #fff5be 0%, #ffd700 40%, #ff9900 80%, #b36600 100%); 
+            border-radius: 50%; 
+            border: 1.5px solid var(--text-white); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4), inset 0 -1.5px 3px rgba(0,0,0,0.4), inset 0 1.5px 2px rgba(255,255,255,0.6); 
+            vertical-align: middle; 
+        }
+
+        .app-coin::before { 
+            content: '★'; 
+            color: var(--text-white); 
+            font-size: 12px; 
+            line-height: 1; 
+            margin-top: -1px; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6); 
+            font-weight: bold; 
+        }
+
+        .app-coin.large { 
+            width: 50px; 
+            height: 50px; 
+            border-width: 2.5px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 -3px 5px rgba(0,0,0,0.4), inset 0 3px 4px rgba(255,255,255,0.7); 
+        }
+
+        .app-coin.large::before { 
+            font-size: 26px; 
+            margin-top: -2px; 
+        }
+
+        /* ==========================================
+           3. LOBBY HEADER NAV ELEMENT PANELS
+           ========================================== */
+        .coin-header { 
+            position: absolute; 
+            top: 15px; 
+            left: 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            background: rgba(22,22,53,0.85); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.3); 
+            font-weight: bold; 
+            font-size: 16px; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+        }
+
+        .profile-header { 
+            position: absolute; 
+            top: 12px; 
+            right: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 44px; 
+            height: 44px; 
+            background: rgba(14,15,45,0.9); 
+            border-radius: 50%; 
+            border: 1.5px solid rgba(var(--neon-purple-rgb),0.85); 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 0 12px rgba(var(--neon-purple-rgb),0.5); 
+            padding: 4px; 
+            cursor: pointer; 
+        }
+
+        .button-container { 
+            margin-top: 105px; 
+            padding: 0 5px; 
+        }
+
+        /* ==========================================
+           4. LOBBY NAVIGATION GAME ENTRY INTERFACE
+           ========================================== */
+        .game-btn { 
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
+            color: var(--text-white); 
+            padding: 0 20px; 
+            height: 68px; 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.15); 
+            border-radius: 16px; 
+            width: 100%; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-bottom: 18px; 
+            box-shadow: 0 6px 18px rgba(0,0,0,0.55); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1); 
+        }
+
+        .btn-left-layout { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            height: 100%; 
+            white-space: nowrap; 
+            overflow: hidden; 
+        }
+
+        .btn-vector-arrow { 
+            width: 20px; 
+            height: 20px; 
+            color: rgba(255,255,255,0.35); 
+            transition: transform 0.25s ease, color 0.25s ease; 
+            display: block; 
+            flex-shrink: 0; 
+        }
+
+        .game-btn:active { 
+            transform: scale(0.97); 
+            border-color: var(--neon-blue); 
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, var(--btn-active-bottom) 100%); 
+            box-shadow: 0 0 15px rgba(var(--neon-blue-rgb),0.2); 
+        }
+
+        .game-btn:active .btn-vector-arrow { 
+            transform: translateX(4px); 
+            color: var(--neon-blue); 
+        }
+
+        .btn-svg-icon { 
+            width: 32px; 
+            height: 32px; 
+            flex-shrink: 0; 
+            display: block; 
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4)); 
+        }
+
+        /* ==========================================
+           5. SHARED HEADERS SYSTEMS ACROSS ALL SCREENS
+           ========================================== */
+        .spin-header-bar { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            width: 100%; 
+            margin-bottom: 25px; 
+            padding-bottom: 10px; 
+            min-height: 40px; 
+            z-index: 50; 
+        }
+
+        .back-btn { 
+            position: absolute; 
+            left: 5px; 
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent; 
+            border: none; 
+            color: var(--text-white); 
+            font-size: 26px; 
+            cursor: pointer; 
+            padding: 10px 15px; 
+            z-index: 50; 
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .back-btn:active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .spin-title { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+        }
+
+        .balance-card { 
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, #0e102e 100%); 
+            border-radius: 20px; 
+            padding: 22px; 
+            margin: 0 auto 30px auto; 
+            box-shadow: 0 12px 28px rgba(0,0,0,0.6); 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.12); 
+            width: 100%; 
+            max-width: 340px; 
+            position: relative; 
+        }
+
+        .balance-title { 
+            font-size: 14px; 
+            color: var(--text-gray); 
+            margin-bottom: 8px; 
+            letter-spacing: 0.5px; 
+        }
+
+        .balance-value { 
+            font-size: 34px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+            letter-spacing: 0.5px; 
+        }
+
+        /* ==========================================
+           6. DAILY SPIN CANVAS WHEEL STRUCTURE
+           ========================================== */
+        .wheel-wrapper { 
+            position: relative; 
+            width: 100%; 
+            max-width: 310px; 
+            aspect-ratio: 1 / 1; 
+            margin: 0 auto; 
+        }
+
+        .wheel-pointer { 
+            position: absolute; 
+            top: -14px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 0; 
+            height: 0; 
+            border-left: 16px solid transparent; 
+            border-right: 16px solid transparent; 
+            border-top: 26px solid #ff4444; 
+            z-index: 10; 
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4)); 
+        }
+
+        #wheelCanvas { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 50%; 
+            box-shadow: 0 0 35px rgba(var(--neon-blue-rgb),0.3); 
+            border: 6px solid #0c1033; 
+            transition: transform 4s cubic-bezier(0.1,0.8,0.1,1); 
+        }
+
+        .center-spin-btn { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%,-50%); 
+            width: 66px; 
+            height: 66px; 
+            background: #060b26; 
+            color: var(--text-white); 
+            border: 4px solid var(--neon-blue); 
+            border-radius: 50%; 
+            font-size: 14px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 0 20px rgba(var(--neon-blue-rgb),0.8); 
+            z-index: 5; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        .center-spin-btn.disabled-state { 
+            background: #2b2b36 !important; 
+            color: #777777 !important; 
+            border-color: #555555 !important; 
+            box-shadow: none !important; 
+            cursor: not-allowed !important; 
+        }
+
+        .spin-info-text { 
+            margin-top: 15px; 
+            font-size: 14px; 
+            color: var(--text-gray); 
+        }
+
+        /* ==========================================
+           7. SCRATCH CONTAINER VIEW & BUTTONS
+           ========================================== */
+        .scratch-card-box { 
+            position: relative; 
+            width: 100%; 
+            max-width: 320px; 
+            aspect-ratio: 1.6; 
+            background: #151528; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 10px auto 25px auto; 
+            border: 1px solid rgba(255,255,255,0.08); 
+        }
+
+        .scratch-under-preview { 
+            position: absolute; 
+            inset: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1; 
+            pointer-events: none; 
+        }
+
+        .under-win-amount { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: var(--gold); 
+            margin-top: 6px; 
+        }
+
+        .under-sub-text { 
+            font-size: 13px; 
+            color: var(--text-gray); 
+            margin-top: 2px; 
+        }
+
+        #scratchCanvas { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 2; 
+            cursor: crosshair; 
+            touch-action: none; 
+            border-radius: 20px; 
+        }
+
+        #scratch-success-view { 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            background: var(--btn-grad-top); 
+            position: relative; 
+            z-index: 3; 
+        }
+
+        .quick-scratch-btn { 
+            position: relative; 
+            z-index: 50;
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
+            border: 1.5px solid var(--neon-blue); 
+            color: var(--neon-blue); 
+            padding: 14px 40px; 
+            border-radius: 16px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            max-width: 320px; 
+            margin: 15px auto 0 auto; 
+            box-shadow: 0 6px 16px rgba(var(--neon-blue-rgb),0.2); 
+            display: block; 
+            transition: all 0.2s ease; 
+        }
+
+        .quick-scratch-btn:active { 
+            transform: scale(0.96); 
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, var(--btn-active-bottom) 100%); 
+            box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.4); 
+        }
+
+        .already-scratched-container { 
+            border: 2px solid rgba(255,255,255,0.2); 
+            color: rgba(255,255,255,0.4); 
+            padding: 14px; 
+            border-radius: 30px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            width: 100%; 
+            max-width: 320px; 
+            text-align: center; 
+            margin: 0 auto; 
+        }
+
+        .confetti-wrapper { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            overflow: hidden; 
+            z-index: 0; 
+        }
+
+        .confetti-piece { 
+            position: absolute; 
+            top: -20px; 
+            opacity: 0.8; 
+            animation: confettiFall linear forwards; 
+            border-radius: 2px; 
+        }
+
+        @keyframes confettiFall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(220px) rotate(360deg); opacity: 0; } 
+        }
+
+        .coins-pile-art { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 12px; 
+            z-index: 1; 
+        }
+
+        .success-win-text { 
+            font-size: 22px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+            margin-bottom: 4px; 
+            z-index: 1; 
+        }
+
+        .success-sub-text { 
+            font-size: 13px; 
+            color: var(--text-gray); 
+            z-index: 1; 
+        }
+
+        /* ==========================================
+           8. STREAKS DAILY REWARDS & CLAIM BUTTONS
+           ========================================== */
+        .claim-reward-main-btn { 
+            position: relative; 
+            z-index: 50;
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
+            border: 1.5px solid var(--neon-blue); 
+            color: var(--neon-blue); 
+            padding: 15px 40px; 
+            border-radius: 16px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            max-width: 320px; 
+            margin: 15px auto 0 auto; 
+            box-shadow: 0 6px 16px rgba(var(--neon-blue-rgb),0.2); 
+            display: block; 
+            transition: all 0.2s ease; 
+        }
+
+        .claim-reward-main-btn:active:not(:disabled) { 
+            transform: scale(0.96); 
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, var(--btn-active-bottom) 100%); 
+            box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.4); 
+        }
+
+        .claim-reward-main-btn:disabled {
+            background: linear-gradient(135deg, #222233 0%, #1a1a26 100%);
+            border: 1.5px solid #444;
+            color: #777;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .rewards-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            width: 100%; 
+            max-width: 340px; 
+            margin: 0 auto 25px auto; 
+        }
+
+        .reward-day-card { 
+            background: linear-gradient(135deg, #1e1e38 0%, #111126 100%); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 12px; 
+            padding: 12px 6px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+        }
+
+        .reward-day-card.day-7 { 
+            grid-column: span 3; 
+            background: linear-gradient(135deg, #3b429f 0%, var(--neon-purple) 100%); 
+            border: 1px solid rgba(255,255,255,0.2); 
+        }
+
+        .reward-day-card.claimed { 
+            border-color: #4caf50; 
+            background: rgba(76,175,80,0.12); 
+            opacity: 0.75; 
+        }
+
+        .reward-day-card.current-active { 
+            border-color: var(--neon-blue); 
+            box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.35); 
+            background: linear-gradient(135deg, #22295c 0%, #151a3a 100%); 
+        }
+
+        .day-title { 
+            font-size: 12px; 
+            color: var(--text-gray); 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+        }
+
+        .reward-day-card.day-7 .day-title { 
+            color: var(--text-white); 
+            font-size: 14px; 
+        }
+
+        .day-coin-value { 
+            font-size: 14px; 
+            font-weight: bold; 
+            color: var(--gold); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 4px; 
+        }
+
+        .reward-day-card.day-7 .day-coin-value { 
+            font-size: 18px; 
+        }
+
+        .day-icon-status { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+        }
+
+        .status-reward-svg { 
+            width: 22px; 
+            height: 22px; 
+            display: block; 
+            margin-top: 6px; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
+        }
+
+        /* ==========================================
+           9. REFER AND EARN LAYOUT DESCRIPTION CARDS
+           ========================================== */
+        .refer-info-card { 
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, #0e102e 100%); 
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.15); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            text-align: left; 
+            line-height: 1.6; 
+        }
+
+        .refer-title-highlight { 
+            font-size: 19px; 
+            font-weight: bold; 
+            color: var(--neon-blue); 
+            margin-bottom: 12px; 
+            border-bottom: 1px solid rgba(var(--neon-blue-rgb),0.2); 
+            padding-bottom: 8px; 
+            text-align: center; 
+        }
+
+        .refer-body-text { 
+            font-size: 14px; 
+            color: #d1d5db; 
+        }
+
+        .refer-steps-box { 
+            margin-top: 14px; 
+            background: rgba(0,0,0,0.2); 
+            padding: 12px; 
+            border-radius: 12px; 
+            border: 1.5px solid rgba(var(--neon-purple-rgb),0.3); 
+        }
+
+        .refer-step-item { 
+            margin-bottom: 8px; 
+            font-size: 13.5px; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 8px; 
+        }
+
+        .refer-step-item:last-child { 
+            margin-bottom: 0; 
+        }
+
+        .refer-link-container { 
+            background: linear-gradient(135deg, #16173a 0%, #0c0d24 100%); 
+            border-radius: 16px; 
+            padding: 16px; 
+            margin-bottom: 30px; 
+            border: 1px dashed var(--neon-blue); 
+            text-align: left; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.45); 
+        }
+
+        .refer-link-subtext { 
+            font-size: 13px; 
+            color: var(--text-gray); 
+            margin-bottom: 10px; 
+            font-weight: bold; 
+        }
+
+        .refer-link-box-display { 
+            background: rgba(5,5,15,0.8); 
+            border-radius: 10px; 
+            padding: 12px; 
+            font-size: 13.5px; 
+            color: var(--neon-blue); 
+            font-weight: bold; 
+            word-break: break-all; 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.15); 
+            user-select: text !important; 
+            -webkit-user-select: text !important; 
+        }
+
+        /* ==========================================
+           10. TIC TAC TOE GRAPHICS GRID MECHANICALS
+           ========================================== */
+        .ttt-board-outer { 
+            width: 100%; 
+            max-width: 300px; 
+            aspect-ratio: 1 / 1; 
+            background: linear-gradient(135deg, #18113c 0%, #090a21 100%); 
+            border: 3px solid var(--neon-purple); 
+            border-radius: 28px; 
+            margin: 20px auto 25px auto; 
+            padding: 12px; 
+            box-shadow: 0 0 25px rgba(var(--neon-purple-rgb),0.55), inset 0 0 15px rgba(var(--neon-purple-rgb),0.25); 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            grid-template-rows: repeat(3, 1fr); 
+            gap: 10px; 
+            overflow: hidden; 
+        }
+
+        .ttt-cell-block { 
+            background: rgba(22,23,53,0.7); 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            border: 1px solid rgba(var(--neon-purple-rgb),0.15); 
+            transition: all 0.2s ease; 
+        }
+
+        .ttt-cell-block:active { 
+            transform: scale(0.95); 
+            background: rgba(var(--neon-purple-rgb),0.1); 
+        }
+
+        .ttt-mark-x { 
+            font-size: 44px; 
+            font-weight: 900; 
+            color: #e3f8ff; 
+            line-height: 1; 
+            text-shadow: 0 0 6px var(--neon-blue), 0 0 15px var(--neon-blue), 0 0 30px #0044ff; 
+        }
+
+        .ttt-mark-o { 
+            font-size: 44px; 
+            font-weight: 900; 
+            color: #ffeef4; 
+            line-height: 1; 
+            text-shadow: 0 0 6px #ff3366, 0 0 15px #ff3366, 0 0 30px #e91e63; 
+        }
+
+        .ttt-game-status { 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: var(--text-gray); 
+            margin-bottom: 20px; 
+            letter-spacing: 0.5px; 
+        }
+
+        /* ==========================================
+           11. WITHDRAW CONFIGURED DARK SQUARE BOX MATRIX
+           ========================================== */
+        .withdraw-matrix-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 14px; 
+            width: 100%; 
+            max-width: 340px; 
+            margin: 25px auto 35px auto; 
+        }
+
+        .withdraw-square-box { 
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.2); 
+            border-radius: 14px; 
+            aspect-ratio: 1 / 1.15; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 16px 10px; 
+            cursor: pointer; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.55); 
+            transition: all 0.2s ease; 
+        }
+
+        .withdraw-square-box:active { 
+            transform: scale(0.96); 
+            border-color: var(--neon-blue); 
+            box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.3); 
+            background: linear-gradient(135deg, #1b1e54 0%, #0d0e32 100%); 
+        }
+
+        .withdraw-box-img { 
+            width: 62px; 
+            height: 62px; 
+            object-fit: contain; 
+            margin-bottom: 4px; 
+            border-radius: 8px; 
+        }
+
+        .withdraw-box-title { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--text-white); 
+            line-height: 1.3; 
+        }
+
+        .withdraw-box-cost { 
+            font-size: 12px; 
+            color: var(--gold); 
+            font-weight: bold; 
+        }
+
+        /* ==========================================
+           12. PREMIUM COMPONENT DETAILED PACK DISPLAY
+           ========================================== */
+        .preview-showcase-box { 
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, #0c0d25 100%); 
+            border: 1.5px solid rgba(var(--neon-blue-rgb),0.25); 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 330px; 
+            margin: 15px auto; 
+            padding: 22px 18px 18px 18px; 
+            box-shadow: 0 10px 28px rgba(0,0,0,0.65); 
+            text-align: left; 
+        }
+
+        .preview-item-row-data { 
+            padding: 2px 0 12px 0; 
+        }
+
+        .preview-item-label { 
+            color: var(--text-gray); 
+            font-size: 13.5px; 
+            font-weight: bold; 
+            display: block; 
+            margin-bottom: 5px; 
+            letter-spacing: 0.3px; 
+        }
+
+        .preview-item-divider { 
+            border: none; 
+            height: 1px; 
+            background: rgba(var(--neon-blue-rgb),0.15); 
+            margin: 0 0 12px 0; 
+            width: 100%; 
+        }
+
+        .preview-contact-input-field { 
+            width: 100%; 
+            background: rgba(5,5,15,0.6); 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.25); 
+            border-radius: 10px; 
+            padding: 12px; 
+            color: var(--text-white); 
+            font-size: 14px; 
+            outline: none; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); 
+            user-select: text !important; 
+            -webkit-user-select: text !important; 
+            transition: border-color 0.25s ease, box-shadow 0.25s ease; 
+        }
+
+        .preview-contact-input-field:focus { 
+            border-color: var(--neon-blue) !important; 
+            box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.25), inset 0 2px 4px rgba(0,0,0,0.4) !important; 
+        }
+
+        /* ==========================================
+           13. DYNAMIC INTERACTIVE SLIDER WITH PROGRESS FILL
+           ========================================== */
+        .slide-to-redeem-track { 
+            position: relative; 
+            width: 100%; 
+            max-width: 330px; 
+            height: 58px; 
+            background: linear-gradient(to right, #cfd1d9 0%, #eef0f6 100%); 
+            border-radius: 14px; 
+            margin: 20px auto 15px auto; 
+            display: flex; 
+            align-items: center; 
+            overflow: hidden; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.4); 
+        }
+
+        .slide-progress-fill { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            height: 100%; 
+            background: #535fda; 
+            width: 0px; 
+            z-index: 1; 
+            pointer-events: none; 
+            border-radius: 14px 0 0 14px; 
+        }
+
+        .slide-centered-info-text { 
+            position: absolute; 
+            width: 100%; 
+            text-align: center; 
+            color: #535fda; 
+            font-size: 16px; 
+            font-weight: 700; 
+            letter-spacing: 0.3px; 
+            z-index: 2; 
+            pointer-events: none; 
+        }
+
+        .slide-swipe-handle { 
+            position: absolute; 
+            left: 4px; 
+            width: 50px; 
+            height: 50px; 
+            background: #535fda; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: grab; 
+            z-index: 3; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.35); 
+            touch-action: none; 
+        }
+
+        .slide-swipe-handle:active { 
+            cursor: grabbing; 
+        }
+
+        .slide-svg-arrow-icon { 
+            width: 24px; 
+            height: 24px; 
+            display: block; 
+            pointer-events: none; 
+        }
+
+        /* ==========================================
+           14. SLIDE OVERLAY PANEL MENU SYSTEM
+           ========================================== */
+        .profile-slide-overlay { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            width: 70%; 
+            height: 100vh; 
+            background: radial-gradient(circle at top center, #14163c 0%, #08081a 100%); 
+            z-index: 999; 
+            transform: translateX(100%); 
+            padding: 5px 15px 20px 15px; 
+            box-shadow: -8px 0 30px rgba(0,0,0,0.85); 
+            border-left: 1.5px solid rgba(var(--neon-blue-rgb),0.25); 
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); 
+            text-align: left; 
+        }
+
+        .profile-slide-overlay.active-slide { 
+            transform: translateX(0); 
+        }
+
+        .profile-custom-top-bar { 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            position: relative; 
+            margin-top: 8px; 
+            height: 44px; 
+        }
+
+        .profile-top-title-text { 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: var(--text-gray); 
+            letter-spacing: 0.4px; 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+        }
+
+        .profile-left-arrow-btn { 
+            background: none; 
+            border: none; 
+            color: var(--text-white); 
+            font-size: 26px; 
+            cursor: pointer; 
+            padding: 5px 15px 5px 0; 
+            line-height: 1; 
+            position: absolute; 
+            left: 10px; 
+            z-index: 5; 
+        }
+
+        .profile-icon-placement { 
+            position: absolute; 
+            right: 10px; 
+            width: 44px; 
+            height: 44px; 
+            background: rgba(14,15,45,0.9); 
+            border-radius: 50%; 
+            border: 1.5px solid rgba(var(--neon-blue-rgb),0.85); 
+            box-shadow: 0 0 10px rgba(var(--neon-blue-rgb),0.4); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 4px; 
+        }
+
+        .profile-stats-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            gap: 12px; 
+            margin-top: 15px; 
+            padding-left: 10px; 
+            width: 100%; 
+        }
+
+        .profile-coin-wrap { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            background: rgba(22,22,53,0.85); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.3); 
+            font-weight: bold; 
+            font-size: 16px; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+            width: fit-content; 
+        }
+
+        .username-display { 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 110px; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4); 
+        }
+
+        .profile-divider { 
+            border: none; 
+            height: 1px; 
+            background: linear-gradient(90deg, transparent, rgba(var(--neon-blue-rgb),0.35), transparent); 
+            margin: 22px 10px; 
+            width: calc(100% - 20px); 
+        }
+
+        .profile-menu-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 14px; 
+            padding: 0 10px; 
+            width: 100%; 
+        }
+
+        .profile-menu-item { 
+            background: linear-gradient(135deg, rgba(21,22,58,0.7) 0%, rgba(13,13,34,0.7) 100%); 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.12); 
+            border-radius: 12px; 
+            padding: 14px 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25); 
+        }
+
+        .profile-menu-item:active { 
+            transform: scale(0.97); 
+            border-color: var(--neon-blue); 
+            background: linear-gradient(135deg, rgba(27,29,76,0.8) 0%, rgba(15,16,40,0.8) 100%); 
+            box-shadow: 0 0 10px rgba(var(--neon-blue-rgb),0.15); 
+        }
+
+        .menu-item-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+            letter-spacing: 0.3px; 
+        }
+
+        .menu-item-arrow { 
+            color: rgba(255,255,255,0.35); 
+            font-size: 16px; 
+            font-weight: bold; 
+        }
+
+        .profile-list-icon { 
+            width: 24px; 
+            height: 24px; 
+            fill: none; 
+            stroke-width: 2.2; 
+            stroke-linecap: round; 
+            stroke-linejoin: round; 
+            flex-shrink: 0; 
+        }
+
+        .icon-edit-profile { 
+            stroke: var(--neon-blue); 
+            filter: drop-shadow(0 0 5px rgba(var(--neon-blue-rgb),0.7)); 
+        }
+
+        .icon-withdraw-coins { 
+            stroke: #2bff6e; 
+            filter: drop-shadow(0 0 5px rgba(43,255,110,0.7)); 
+        }
+
+        /* ==========================================
+           15. EDIT DATA LAYOUT ENTRY INTERFACE
+           ========================================== */
+        .edit-profile-form { 
+            width: 100%; 
+            max-width: 340px; 
+            margin: 20px auto; 
+            padding: 0 10px; 
+            text-align: left; 
+        }
+
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+
+        .form-group label { 
+            display: block; 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: var(--text-gray); 
+            margin-bottom: 8px; 
+            letter-spacing: 0.4px; 
+        }
+
+        .form-group input { 
+            width: 100%; 
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
+            border: 1px solid rgba(var(--neon-blue-rgb),0.2); 
+            border-radius: 12px; 
+            padding: 14px 16px; 
+            color: var(--text-white); 
+            font-size: 16px; 
+            outline: none; 
+            transition: all 0.3s ease; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); 
+        }
+
+        .form-group input:focus { 
+            border-color: var(--neon-blue); 
+            box-shadow: 0 0 10px rgba(var(--neon-blue-rgb),0.2), inset 0 2px 4px rgba(0,0,0,0.4); 
+        }
+
+        .form-group .read-only-balance { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: rgba(255,255,255,0.04); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 12px; 
+            padding: 14px 16px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+        }
+
+        .edit-pic-text { 
+            font-size: 14px; 
+            font-weight: bold; 
+            color: var(--neon-blue); 
+            margin-top: 10px; 
+            margin-bottom: 25px; 
+            cursor: pointer; 
+            text-shadow: 0 0 8px rgba(var(--neon-blue-rgb),0.4); 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-screen">
+        <div class="coin-header">
+            <div class="app-coin"></div>
+            <span class="global-coins">0</span>
+        </div>
+        <div class="profile-header" onclick="openProfileSlide()">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; display:block;">
+                <defs><linearGradient id="profileNeonGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00f0ff" /><stop offset="100%" stop-color="#0044ff" /></linearGradient></defs>
+                <circle cx="16" cy="11.5" r="5.5" fill="url(#profileNeonGrad)"/>
+                <path d="M5 26c0-5 4.5-8.5 11-8.5s11 3.5 11 8.5H5z" fill="url(#profileNeonGrad)"/>
+            </svg>
+        </div>
+        <div class="button-container">
+            <button class="game-btn" onclick="showScreen('spin-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 14 L26 14 A10 10 0 0 1 23.07 21.07 Z" fill="#ff3366"/><path d="M16 14 L23.07 21.07 A10 10 0 0 1 16 24 Z" fill="#00d4ff"/><path d="M16 14 L16 24 A10 10 0 0 1 8.93 21.07 Z" fill="#ffcc00"/><path d="M16 14 L8.93 21.07 Z" fill="#2bff6e"/><path d="M16 14 L6 14 A10 10 0 0 1 8.93 6.93 Z" fill="#9c27b0"/><path d="M16 14 L8.93 6.93 A10 10 0 0 1 16 4 Z" fill="#e91e63"/><path d="M16 14 L16 4 A10 10 0 0 1 23.07 6.93 Z" fill="#ff9800"/><path d="M16 14 L23.07 6.93 A10 10 0 0 1 26 14 Z" fill="#3f51b5"/><circle cx="16" cy="14" r="5" fill="#ffffff" stroke="#10112e" stroke-width="0.8"/><text x="16" y="15.2" font-size="2.6" font-weight="900" fill="#10112e" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" letter-spacing="-0.1px">SPIN</text><path d="M13 24 L10 29 M19 24 L22 29 M7 29 L25 29" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/></svg>Daily Spin</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="game-btn" onclick="showScreen('scratch-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="6" width="16" height="16" rx="2" fill="#ffeb3b" stroke="#fbc02d" stroke-width="1.5"/><path d="M16 10h8M16 14h5" stroke="#f57f17" stroke-width="1" stroke-linecap="round" opacity="0.4"/><rect x="4" y="10" width="16" height="16" rx="2" fill="#f44336" stroke="#d32f2f" stroke-width="1.5"/><circle cx="12" cy="18" r="2.5" fill="#ffffff" opacity="0.3"/><path d="M8 14h8M8 22h5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/></svg>Scratch Card</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="game-btn" onclick="showScreen('ttt-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="30" height="30" rx="6" fill="#090a21" stroke="#b500ff" stroke-width="1.5" /><path d="M11 1v30M21 1v30M1 11h30M1 21h30" stroke="#3c1466" stroke-width="1"/><path d="M4 4l5 5M9 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="6.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 4l5 5M28 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><path d="M4 13.5l5 5M9 13.5l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="16" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="6.5" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="16" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 23l5 5M28 23l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/></svg>Tic-tac-toe</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="game-btn" onclick="showScreen('ads-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="28" height="20" rx="6" fill="#090a21" stroke="#00d4ff" stroke-width="1.5"/><path d="M13 11l7 5-7 5V11z" fill="#00d4ff"/><circle cx="7" cy="10" r="1.5" fill="#ff3366"/><circle cx="25" cy="22" r="1.5" fill="#2bff6e"/></svg>Ads to earn money</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="game-btn" onclick="showScreen('reward-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rewardGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e91e63" /><stop offset="100%" stop-color="#ff4081" /></linearGradient></defs><rect x="4" y="6" width="24" height="22" rx="4" stroke="url(#rewardGrad)" stroke-width="2.5" fill="rgba(233,30,99,0.05)"/><path d="M4 13h24" stroke="url(#rewardGrad)" stroke-width="2"/><path d="M9 3v5M23 3v5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/><path d="M10 18h4v4h-4zM18 18h4v4h-4z" fill="#ffffff" opacity="0.9"/></svg>7 Day Reward</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="game-btn" onclick="showScreen('refer-screen')">
+                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 25v-1.5a4 4 0 0 1 4-4h5a4 4 0 0 1 4 4V25" stroke="#b500ff" stroke-width="2.5" stroke-linecap="round"/><circle cx="20.5" cy="11.5" r="4" stroke="#b500ff" stroke-width="2.5"/><path d="M5 22v-1a3 3 0 0 1 3-3h2.5" stroke="#b500ff" stroke-width="1.8" opacity="0.55" stroke-linecap="round"/><circle cx="9.2" cy="12.2" r="2.8" stroke="#b500ff" stroke-width="1.8" opacity="0.55"/></svg>Refer & Earn</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="spin-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Spin & Earn Coins</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="300" height="300"></canvas>
+            <button class="center-spin-btn" id="spinBtn" onclick="triggerAdsgramVideo('spin')">SPIN</button>
+        </div>
+        <div id="spinCounterText" class="spin-info-text"></div>
+    </div>
+
+    <div id="scratch-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Scratch Card</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div class="scratch-card-box">
+            <div class="scratch-under-preview">
+                <div class="app-coin large"></div>
+                <div id="under-amount-display" class="under-win-amount">0</div>
+                <div class="under-sub-text">Coins Won!</div>
+            </div>
+            <canvas id="scratchCanvas" width="320" height="200"></canvas>
+            <div id="scratch-success-view" class="hidden">
+                <div class="confetti-wrapper" id="scratchConfetti"></div>
+                <div class="coins-pile-art">
+                    <div class="app-coin large"></div>
+                    <div class="app-coin large" style="margin: 0 -15px; z-index: 2; transform: scale(1.15);"></div>
+                    <div class="app-coin large"></div>
+                </div>
+                <div class="success-win-text">You Won <span id="reward-amount-display">0</span> Coins!</div>
+                <div class="success-sub-text">Confetti Celebration</div>
+            </div>
+        </div>
+        <button id="quickScratchBtn" class="quick-scratch-btn" onclick="triggerAdsgramVideo('scratch')">QUICK scratch</button>
+        <button id="scratchClaimBtn" class="claim-reward-main-btn hidden" onclick="triggerAdsgramVideo('scratch')">CLAIM REWARD</button>
+        <div id="alreadyScratchedBtn" class="already-scratched-container hidden">ALREADY SCRATCHED</div>
+    </div>
+
+    <div id="reward-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">7 Day Rewards</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div class="rewards-grid" id="dailyRewardsGrid"></div>
+        <button id="claimRewardMainBtn" class="claim-reward-main-btn" onclick="triggerAdsgramVideo('reward')">CLAIM TODAY'S REWARD</button>
+    </div>
+
+    <div id="refer-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Refer & Earn</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div class="refer-info-card">
+            <div class="refer-title-highlight">Refer & Earn Program</div>
+            <div class="refer-body-text">Hello User! You can earn coins from this Telegram bot to buy premium items like <b>Snake Engine, Kos Engine, Carrom Pool Coins, Carrom Pass, Bitaim, and Aim Carrom King</b> absolutely for free!</div>
+            <div class="refer-steps-box">
+                <div class="refer-step-item">🚀 <span>Share your unique link with your friends.</span></div>
+                <div class="refer-step-item">🎁 <span>When your friend signs up, both you and your friend will instantly receive <b>500 Coins</b>!</span></div>
+                <div class="refer-step-item">💎 <span>Once your friend reaches <b>1,00,000 Coins</b>, you will get an extra bonus of <b>500 Coins</b>!</span></div>
+            </div>
+        </div>
+        <div class="refer-link-container">
+            <div class="refer-link-subtext">Your Unique Referral Link</div>
+            <div class="refer-link-box-display" id="refLinkDisplay">https://t.me/CarromRedem_bot...</div>
+        </div>
+        <button class="claim-reward-main-btn" onclick="executeTelegramShare()">SHARE NOW</button>
+    </div>
+
+    <div id="ttt-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Tic-Tac-Toe Neon</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div class="ttt-game-status" id="tttStatusText">Your Turn (X)</div>
+        <div class="ttt-board-outer">
+            <div class="ttt-cell-block" onclick="handleTTTClick(0)" id="ttt0"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(1)" id="ttt1"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(2)" id="ttt2"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(3)" id="ttt3"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(4)" id="ttt4"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(5)" id="ttt5"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(6)" id="ttt6"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(7)" id="ttt7"></div>
+            <div class="ttt-cell-block" onclick="handleTTTClick(8)" id="ttt8"></div>
+        </div>
+        <button id="tttClaimBtn" class="claim-reward-main-btn hidden" onclick="triggerAdsgramVideo('ttt')">CLAIM 300 COINS</button>
+        <button id="tttResetBtn" class="claim-reward-main-btn hidden" onclick="resetTTTGame()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: white; box-shadow: none;">PLAY AGAIN</button>
+    </div>
+
+    <div id="ads-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Ads to earn money</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div style="font-size: 22px; font-weight: bold; color: var(--gold); margin-bottom: 35px; text-shadow: 0 0 12px rgba(255,204,0,0.4); letter-spacing: 0.5px;">1 Ad = 200 Coins</div>
+        <button class="claim-reward-main-btn" onclick="triggerAdsgramVideo('ads_screen')">PLAY ADS</button>
+    </div>
+
+    <div id="withdraw-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Available Rewards</div>
+        </div>
+        <div style="text-align: center; margin: 15px 0 20px 0;">
+            <div style="width: 76px; height: 76px; background: rgba(14,15,45,0.9); border-radius: 50%; border: 2px solid #2bff6e; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(43,255,110,0.455);">
+                <svg viewBox="0 0 32 32" fill="none" style="width: 44px; height: 44px;"><circle cx="16" cy="11.5" r="5.5" stroke="#2bff6e" stroke-width="2"/><path d="M5 26c0-5 4.5-8.5 11-8.5s11 3.5 11 8.5H5z" stroke="#2bff6e" stroke-width="2"/></svg>
+            </div>
+            <div id="withdrawUsername" class="username-display" style="font-size: 18px; margin-top: 10px; max-width: 100%; text-align: center;">@username</div>
+            <div style="font-size: 14px; color: var(--text-gray); margin-top: 6px;">Current Balance: <span class="global-coins" style="font-weight: bold; color: white;">0</span></div>
+        </div>
+        <hr class="profile-divider" style="background: linear-gradient(90deg, transparent, rgba(43,255,110,0.4), transparent);">
+        <div class="withdraw-matrix-grid">
+            <div class="withdraw-square-box" onclick="openItemDetail('50 Redeem Code', '200,000 coins', 'https://i.ibb.co/wZNNYFrJ/IMG-20260710-095939-2.jpg', '₹50 Google Play Gift Card')">
+                <img src="https://i.ibb.co/wZNNYFrJ/IMG-20260710-095939-2.jpg" class="withdraw-box-img" alt="Redeem Code">
+                <span class="withdraw-box-title">50 Redeem Code</span>
+                <span class="withdraw-box-cost">200,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('Carrom Pass', '900,000 coins', 'https://i.ibb.co/LX79zFL9/Screenshot-2026-07-10-16-56-32-661-com-android-chrome-edit-2.jpg', 'Premium Season Carrom Pass')">
+                <img src="https://i.ibb.co/LX79zFL9/Screenshot-2026-07-10-16-56-32-661-com-android-chrome-edit-2.jpg" class="withdraw-box-img" alt="Carrom Pass">
+                <span class="withdraw-box-title">Carrom Pass</span>
+                <span class="withdraw-box-cost">900,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('King Of Shots', '900,000 coins', 'https://i.ibb.co/qYCM98vS/Screenshot-2026-07-10-17-52-20-371-org-telegram-messenger-edit.jpg', '3 Days Standard Subscription')">
+                <img src="https://i.ibb.co/qYCM98vS/Screenshot-2026-07-10-17-52-20-371-org-telegram-messenger-edit.jpg" class="withdraw-box-img" alt="King Of Shots">
+                <span class="withdraw-box-title">King Of Shots</span>
+                <span class="withdraw-box-cost">900,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('King Of Shots', '5,000,000 coins', 'https://i.ibb.co/qYCM98vS/Screenshot-2026-07-10-17-52-20-371-org-telegram-messenger-edit.jpg', '7 Days Premium Subscription')">
+                <img src="https://i.ibb.co/qYCM98vS/Screenshot-2026-07-10-17-52-20-371-org-telegram-messenger-edit.jpg" class="withdraw-box-img" alt="King Of Shots">
+                <span class="withdraw-box-title">King Of Shots</span>
+                <span class="withdraw-box-cost">5,000,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('Bitaim+', '1,000,000 coins', 'https://i.ibb.co/WNWR661n/Bitaim-2.jpg', 'Lifetime Active Premium Hack')">
+                <img src="https://i.ibb.co/WNWR661n/Bitaim-2.jpg" class="withdraw-box-img" alt="Bitaim+">
+                <span class="withdraw-box-title">Bitaim+</span>
+                <span class="withdraw-box-cost">1,000,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('Snack Engine', '1,700,000 coins', 'https://i.ibb.co/ZRDWNwxY/Screenshot-2026-07-10-16-48-27-800-org-telegram-messenger-edit-2.jpg', '3 Days Active Key Slot')">
+                <img src="https://i.ibb.co/ZRDWNwxY/Screenshot-2026-07-10-16-48-27-800-org-telegram-messenger-edit-2.jpg" class="withdraw-box-img" alt="Snack Engine">
+                <span class="withdraw-box-title">Snack Engine</span>
+                <span class="withdraw-box-cost">1,700,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('Snack Engine', '5,000,000 coins', 'https://i.ibb.co/ZRDWNwxY/Screenshot-2026-07-10-16-48-27-800-org-telegram-messenger-edit-2.jpg', '7 Days Active Mega Key Slot')">
+                <img src="https://i.ibb.co/ZRDWNwxY/Screenshot-2026-07-10-16-48-27-800-org-telegram-messenger-edit-2.jpg" class="withdraw-box-img" alt="Snack Engine">
+                <span class="withdraw-box-title">Snack Engine</span>
+                <span class="withdraw-box-cost">5,000,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('Aim Carrom King', '5,000,000 coins', 'https://i.ibb.co/bgrP6v5p/Screenshot-2026-07-10-17-46-59-600-com-google-android-googlequicksearchbox-edit.jpg', '7 Days Official Pro Activation')">
+                <img src="https://i.ibb.co/bgrP6v5p/Screenshot-2026-07-10-17-46-59-600-com-google-android-googlequicksearchbox-edit.jpg" class="withdraw-box-img" alt="Aim Carrom King">
+                <span class="withdraw-box-title">Aim Carrom King</span>
+                <span class="withdraw-box-cost">5,000,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('220 Gems', '1,000,000 coins', 'https://i.ibb.co/9mNXD9zV/Screenshot-2026-07-10-17-57-12-779-com-android-chrome-edit-2.jpg', '220 Safe In-Game Gems Pack')">
+                <img src="https://i.ibb.co/9mNXD9zV/Screenshot-2026-07-10-17-57-12-779-com-android-chrome-edit-2.jpg" class="withdraw-box-img" alt="220 Gems">
+                <span class="withdraw-box-title">220 Gems</span>
+                <span class="withdraw-box-cost">1,000,000 coins</span>
+            </div>
+            <div class="withdraw-square-box" onclick="openItemDetail('570 Gems', '2,000,000 coins', 'https://i.ibb.co/jZ4fZ6JY/Screenshot-2026-07-10-17-57-12-779-com-android-chrome-edit-3.jpg', '570 Safe In-Game Gems Pack')">
+                <img src="https://i.ibb.co/jZ4fZ6JY/Screenshot-2026-07-10-17-57-12-779-com-android-chrome-edit-3.jpg" class="withdraw-box-img" alt="570 Gems">
+                <span class="withdraw-box-title">570 Gems</span>
+                <span class="withdraw-box-cost">2,000,000 coins</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="item-detail-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('withdraw-screen')">←</button>
+            <div class="spin-title" id="detail-item-title">Reward Name</div>
+        </div>
+        <div class="balance-card" style="margin-bottom: 15px;">
+            <div class="balance-title">Your Coin Balance</div>
+            <div class="balance-value global-coins">0</div>
+        </div>
+        <div style="margin: 12px auto 6px auto;">
+            <img id="detail-item-img" src="" style="width: 74px; height: 74px; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); border: 1px solid rgba(255,255,255,0.1);" alt="Item Icon">
+        </div>
+        <div class="preview-showcase-box">
+            <div class="preview-item-row-data">
+                <span class="preview-item-label">Reward Value :</span>
+                <span id="detail-reward-value" style="color: var(--text-white); font-size: 16px; font-weight: bold;">Loading...</span>
+            </div>
+            <hr class="preview-item-divider">
+            <div class="preview-item-row-data">
+                <span class="preview-item-label">Coins Value :</span>
+                <span id="detail-item-cost" style="color: var(--gold); font-size: 16px; font-weight: bold;">0 coins</span>
+            </div>
+            <hr class="preview-item-divider">
+            <div class="preview-item-row-data">
+                <span class="preview-item-label">Description :</span>
+                <span style="color: #d1d5db; font-size: 13.5px; line-height: 1.45; display: block; font-weight: 500;">Your redeem request will be processed manually by our administration crew. The secure account credentials or tool activation login keys will be successfully delivered to you within 24-48 hours max. Please provide your correct information below.</span>
+            </div>
+            <hr class="preview-item-divider">
+            <div class="preview-item-row-data" style="width: 100%; padding-bottom: 2px;">
+                <label class="preview-item-label" style="margin-bottom: 8px;">Contact Box :</label>
+                <input type="text" id="detail-contact-input" class="preview-contact-input-field" placeholder="Enter your telegram/whatsapp number">
+            </div>
+        </div>
+        <div class="slide-to-redeem-track" id="sliderTrack">
+            <div class="slide-progress-fill" id="sliderFill"></div>
+            <div class="slide-centered-info-text">Slide to redeem card</div>
+            <div class="slide-swipe-handle" id="sliderHandle">
+                <svg class="slide-svg-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-profile-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Edit Profile</div>
+        </div>
+        <div style="display: flex; justify-content: center; margin-top: 15px;">
+            <div style="width: 76px; height: 76px; background: rgba(14,15,45,0.9); border-radius: 50%; border: 2px solid var(--neon-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(var(--neon-blue-rgb),0.455);">
+                <svg viewBox="0 0 32 32" fill="none" style="width: 44px; height: 44px;"><circle cx="16" cy="11.5" r="5.5" stroke="var(--neon-blue)" stroke-width="2"/><path d="M5 26c0-5 4.5-8.5 11-8.5s11 3.5 11 8.5H5z" stroke="var(--neon-blue)" stroke-width="2"/></svg>
+            </div>
+        </div>
+        <div class="edit-pic-text" onclick="alert('Profile picture updates via Telegram identity natively.')">Edit Profile Picture</div>
+        <div class="edit-profile-form">
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="editProfileName" disabled style="opacity: 0.6; cursor: not-allowed; border-color: #444444;">
+            </div>
+            <div class="form-group">
+                <label>Coins balance:</label>
+                <div class="read-only-balance">
+                    <div class="app-coin"></div>
+                    <span class="global-coins">0</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp:</label>
+                <input type="tel" id="editProfileWhatsapp" placeholder="Enter WhatsApp number">
+            </div>
+            <button class="claim-reward-main-btn" style="margin-top: 10px;" onclick="saveProfileChanges()">SAVE</button>
+        </div>
+    </div>
+
+    <div id="profile-slide-screen" class="profile-slide-overlay">
+        <div class="profile-custom-top-bar">
+            <button class="profile-left-arrow-btn" onclick="closeProfileSlide()">→</button>
+            <div class="profile-top-title-text">User Profile</div>
+            <div class="profile-icon-placement">
+                <svg viewBox="0 0 32 32" fill="none" style="width: 100%; height: 100%; display: block;"><circle cx="16" cy="11.5" r="5.5" stroke="var(--neon-blue)" stroke-width="2"/><path d="M5 26c0-5 4.5-8.5 11-8.5s11 3.5 11 8.5H5z" stroke="var(--neon-blue)" stroke-width="2"/></svg>
+            </div>
+        </div>
+        <div class="profile-stats-row">
+            <div class="profile-coin-wrap">
+                <div class="app-coin"></div>
+                <span class="global-coins">0</span>
+            </div>
+            <div class="username-display" id="tgUsername">Loading...</div>
+        </div>
+        <hr class="profile-divider">
+        <div class="profile-menu-container">
+            <div class="profile-menu-item" onclick="showScreen('edit-profile-screen'); closeProfileSlide();">
+                <div class="menu-item-left">
+                    <svg class="profile-list-icon icon-edit-profile" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Edit Profile</span>
+                </div>
+                <div class="menu-item-arrow">→</div>
+            </div>
+            <div class="profile-menu-item" onclick="showScreen('withdraw-screen'); closeProfileSlide();">
+                <div class="menu-item-left">
+                    <svg class="profile-list-icon icon-withdraw-coins" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><path d="M12 14v2M10 15h4"/></svg>
+                    <span>Withdraw Coins</span>
+                </div>
+                <div class="menu-item-arrow">→</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiaYzra-PFiwwObp_POTZdIt9OICT0krw",
+            authDomain: "carrom-redeem-app.firebaseapp.com",
+            projectId: "carrom-redeem-app",
+            storageBucket: "carrom-redeem-app.firebasestorage.app",
+            messagingSenderId: "987489928421",
+            appId: "1:987489928421:web:cfd11d96f7228e38da600c"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.tg = window.Telegram.WebApp;
+        window.tg.expand();
+        window.activeTelegramId = "123456"; 
+        window.activeUsername = "@Guest_User";
+        window.initialProfileName = "Guest User";
+
+        if (window.tg.initDataUnsafe && window.tg.initDataUnsafe.user) {
+            let u = window.tg.initDataUnsafe.user;
+            window.activeTelegramId = u.id;
+            window.activeUsername = u.username ? "@" + u.username : u.first_name;
+            window.initialProfileName = u.username ? "@" + u.username : u.first_name + " " + (u.last_name || "");
+        }
+
+        document.getElementById('tgUsername').innerText = window.initialProfileName;
+        document.getElementById('withdrawUsername').innerText = window.initialProfileName;
+        document.getElementById('editProfileName').value = window.initialProfileName;
+
+        window.currentCoins = 0; 
+        window.isSpinning = false; 
+        window.currentFullSpins = 0; 
+        window.currentAdTarget = 'spin'; 
+        window.currentRewardAmount = 0; 
+        window.isScratchCompleted = false; 
+        window.isDrawing = false; 
+        window.lastX = 0; 
+        window.lastY = 0;
+        window.tttBoard = ["", "", "", "", "", "", "", "", ""]; 
+        window.isTTTActive = true;
+        window.isDraggingSlider = false; 
+        window.sliderStartX = 0; 
+        window.sliderCurrentX = 0; 
+        window.selectedItemRawCost = 0;
+        
+        window.rewards = [450, 1000, 100, 250, 500, 300, 350, 400]; 
+        window.colors = ['#6e473b', '#8e24aa', '#ff5722', '#ffb300', '#388e3c', '#00a1ff', '#7e57c2', '#e91e63']; 
+        window.staticDailyValues = [100, 300, 400, 500, 600, 700, 1000];
+        window.AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "37257" }) : null;
+
+        window.syncUserProfile = async function() {
+            try {
+                const userDocRef = doc(db, "users", window.activeTelegramId.toString());
+                const userSnapshot = await getDoc(userDocRef);
+                if (userSnapshot.exists()) {
+                    const data = userSnapshot.data();
+                    window.currentCoins = data.coins || 0;
+                    localStorage.setItem('spin_count_left', data.spin_count_left ?? 100);
+                    localStorage.setItem('reward_streak', data.reward_streak ?? 0);
+                    localStorage.setItem('last_reward_date', data.last_reward_date || "");
+                    document.getElementById('editProfileWhatsapp').value = data.whatsapp || "";
+                } else {
+                    window.currentCoins = 0;
+                    await setDoc(userDocRef, { telegram_id: window.activeTelegramId, username: window.activeUsername, coins: 0, whatsapp: "", spin_count_left: 100, last_spin_date: new Date().toDateString(), reward_streak: 0, last_reward_date: "" });
+                    localStorage.setItem('spin_count_left', 100); 
+                    localStorage.setItem('reward_streak', 0); 
+                    localStorage.setItem('last_reward_date', "");
+                }
+                window.updateCoinsDisplay(); 
+                window.updateSpinLimitUI();
+            } catch (e) { console.error(e); }
+        };
+
+        window.updateCoinsDisplay = function() { 
+            document.querySelectorAll('.global-coins').forEach(el => el.innerText = window.currentCoins.toLocaleString()); 
+        };
+
+        window.saveProfileChanges = async function() {
+            let whatsappVal = document.getElementById('editProfileWhatsapp').value.trim();
+            try { 
+                await updateDoc(doc(db, "users", window.activeTelegramId.toString()), { whatsapp: whatsappVal }); 
+                alert("Profile saved!"); 
+                window.showScreen('main-screen'); 
+            } catch (err) { 
+                alert("Failed to save."); 
+            }
+        };
+
+        // 🛡️ MODIFIED: Server handles coins now. Frontend just handles UI & Streaks
+        window.creditCoinsDirectly = async function(amount, gameType) {
+            try {
+                let updatePayload = {};
+                
+                if (gameType === 'spin') { 
+                    let leftSpins = parseInt(localStorage.getItem('spin_count_left')) - 1; 
+                    localStorage.setItem('spin_count_left', leftSpins); 
+                    updatePayload.spin_count_left = leftSpins; 
+                } 
+                else if (gameType === 'reward') { 
+                    let streak = parseInt(localStorage.getItem('reward_streak')) + 1; 
+                    localStorage.setItem('reward_streak', streak); 
+                    localStorage.setItem('last_reward_date', new Date().toDateString()); 
+                    updatePayload.reward_streak = streak; 
+                    updatePayload.last_reward_date = new Date().toDateString(); 
+                }
+                
+                if(Object.keys(updatePayload).length > 0) {
+                    await updateDoc(doc(db, "users", window.activeTelegramId.toString()), updatePayload); 
+                }
+                
+                // Wait 1.5s for Vercel S2S hook to finish, then fetch real verified balance
+                setTimeout(async () => {
+                    await window.syncUserProfile(); 
+
+                    if(gameType === 'spin') { window.updateSpinLimitUI(); alert(`Won ${amount} Coins!`); }
+                    if(gameType === 'reward') { window.renderRewardScreenData(); alert(`Claimed ${amount} Coins.`); }
+                    if(gameType === 'scratch') { 
+                        document.getElementById('quickScratchBtn').classList.add('hidden');
+                        document.getElementById('scratchCanvas').classList.add('hidden');
+                        document.getElementById('scratchClaimBtn').classList.add('hidden'); 
+                        document.getElementById('scratch-success-view').classList.remove('hidden'); 
+                        document.getElementById('alreadyScratchedBtn').classList.remove('hidden'); 
+                        window.triggerConfetti(); 
+                        alert(`Won ${amount} Coins!`); 
+                    }
+                    if(gameType === 'ttt') { 
+                        document.getElementById("tttClaimBtn").classList.add("hidden"); 
+                        document.getElementById("tttResetBtn").classList.remove("hidden"); 
+                        alert("300 Coins claimed!"); 
+                    }
+                    if(gameType === 'ads_screen') { alert("200 Coins added!"); }
+                }, 1500);
+            } catch (err) { 
+                console.error("Error updating local UI records:", err);
+            }
+        };
+
+        window.processWithdrawItem = async function(itemName) {
+            let userContactVal = document.getElementById('detail-contact-input').value.trim();
+            if (!userContactVal) { alert("Please enter Contact Details."); window.resetSliderFrame(); return; }
+            if (window.currentCoins < window.selectedItemRawCost) { alert(`Need ${window.selectedItemRawCost.toLocaleString()} coins!`); window.resetSliderFrame(); return; }
+            try {
+                window.currentCoins -= window.selectedItemRawCost; 
+                await updateDoc(doc(db, "users", window.activeTelegramId.toString()), { coins: window.currentCoins });
+                await addDoc(collection(db, "redeem_requests"), { 
+                    telegram_id: window.activeTelegramId, 
+                    username: window.activeUsername, 
+                    whatsapp: userContactVal, 
+                    item_name: itemName, 
+                    coins_deducted: window.selectedItemRawCost, 
+                    timestamp: new Date().toISOString(), 
+                    status: "Pending" 
+                });
+                window.updateCoinsDisplay(); 
+                alert(`Success! Redeemed ${itemName}.`); 
+                document.getElementById('detail-contact-input').value = ""; 
+                window.showScreen('withdraw-screen');
+            } catch (e) { 
+                alert("Error."); 
+                window.resetSliderFrame(); 
+            }
+        };
+
+        window.isAdPlaying = false; 
+        
+        // 🛡️ MODIFIED: Secure Token generator before Ads trigger
+        window.triggerAdsgramVideo = async function(target) {
+            if (window.isAdPlaying) return; 
+
+            // Calculate exact reward before ad plays
+            if (target === 'spin') { 
+                window.checkAndResetSpins(); 
+                if ((parseInt(localStorage.getItem('spin_count_left')) || 0) <= 0 || window.isSpinning) return; 
+                const randomIndex = Math.floor(Math.random() * 8);
+                window.currentRewardAmount = window.rewards[randomIndex];
+                window.spinTargetIndex = randomIndex;
+            } else if (target === 'scratch') {
+                // Generated by UI already
+            } else if (target === 'reward') {
+                window.currentRewardAmount = window.staticDailyValues[parseInt(localStorage.getItem('reward_streak')) || 0];
+            } else if (target === 'ttt') {
+                window.currentRewardAmount = 300;
+            } else if (target === 'ads_screen') {
+                window.currentRewardAmount = 200;
+            }
+
+            try {
+                const userRef = doc(db, "users", window.activeTelegramId.toString());
+                await setDoc(userRef, {
+                    pending_reward: {
+                        gameType: target,
+                        amount: window.currentRewardAmount,
+                        timestamp: Date.now()
+                    }
+                }, { merge: true });
+                console.log("Secure transaction matrix initialized!");
+            } catch (error) {
+                console.error("Failed to secure the transaction", error);
+                alert("Security check failed, please try again.");
+                return;
+            }
+
+            window.currentAdTarget = target;
+            
+            if (window.AdsgramController) { 
+                window.isAdPlaying = true;
+                
+                // 🛡️ FIXED: Removed 10-second timeout. Ad waits for true completion.
+                window.AdsgramController.show().then(() => {
+                    window.isAdPlaying = false;
+                    window.executeEarningLogic(); // Wheel will spin now
+                }).catch(async () => {
+                    window.isAdPlaying = false;
+                    await setDoc(doc(db, "users", window.activeTelegramId.toString()), { pending_reward: null }, { merge: true });
+                    alert("Ad skipped or failed to load!");
+                }); 
+            } else { 
+                window.executeEarningLogic(); 
+            }
+        };
+
+        // 🛡️ MODIFIED: Use pre-calculated UI values for spin
+        window.executeEarningLogic = function() {
+            if (window.currentAdTarget === 'spin') {
+                window.isSpinning = true; 
+                const canvas = document.getElementById('wheelCanvas'); 
+                const randomIndex = window.spinTargetIndex || 0;
+                window.currentFullSpins += 5; 
+                if(canvas) canvas.style.transform = `rotate(${(360 * window.currentFullSpins) + 247.5 - (randomIndex * 45)}deg)`;
+                setTimeout(() => { window.creditCoinsDirectly(window.currentRewardAmount, 'spin'); window.isSpinning = false; }, 4000);
+            } 
+            else if (window.currentAdTarget === 'scratch') { window.creditCoinsDirectly(window.currentRewardAmount, 'scratch'); } 
+            else if (window.currentAdTarget === 'reward') { window.creditCoinsDirectly(window.currentRewardAmount, 'reward'); } 
+            else if (window.currentAdTarget === 'ttt') { window.creditCoinsDirectly(300, 'ttt'); } 
+            else if (window.currentAdTarget === 'ads_screen') { window.creditCoinsDirectly(200, 'ads_screen'); }
+        };
+
+        window.openProfileSlide = function() { document.getElementById('profile-slide-screen').classList.add('active-slide'); };
+        window.closeProfileSlide = function() { document.getElementById('profile-slide-screen').classList.remove('active-slide'); };
+        
+        window.checkAndResetSpins = function() { 
+            let todayStr = new Date().toDateString(); 
+            if (localStorage.getItem('last_spin_date') !== todayStr) { 
+                localStorage.setItem('spin_count_left', 100); 
+                localStorage.setItem('last_spin_date', todayStr); 
+            } 
+        };
+        
+        window.updateSpinLimitUI = function() {
+            window.checkAndResetSpins(); 
+            let leftSpins = parseInt(localStorage.getItem('spin_count_left')) || 100;
+            const tx = document.getElementById('spinCounterText'), spinBtn = document.getElementById('spinBtn');
+            if(tx) { 
+                if (leftSpins > 0) { 
+                    tx.innerText = `Daily Spins left: ${leftSpins}`; 
+                    tx.style.color = "#b0b5e3"; 
+                    if(spinBtn) spinBtn.classList.remove('disabled-state'); 
+                } else { 
+                    tx.innerText = "Daily spins over! Come back tomorrow."; 
+                    tx.style.color = "#ff4444"; 
+                    if(spinBtn) spinBtn.classList.add('disabled-state'); 
+                } 
+            }
+        };
+
+        window.generateRandomScratchReward = function() {
+            let dropRoll = Math.random(); 
+            window.currentRewardAmount = dropRoll < 0.80 ? Math.floor(Math.random() * 301) + 50 : (dropRoll < 0.95 ? Math.floor(Math.random() * 350) + 351 : Math.floor(Math.random() * 300) + 701);
+            document.getElementById('under-amount-display').innerText = window.currentRewardAmount; 
+            document.getElementById('reward-amount-display').innerText = window.currentRewardAmount; 
+            window.isScratchCompleted = false;
+        };
+
+        window.getReferralLink = function() { return "https://t.me/CarromRedem_bot/CarromRedeem?startapp=ref_" + window.activeTelegramId; };
+        window.setupReferralLinkUI = function() { if(document.getElementById('refLinkDisplay')) document.getElementById('refLinkDisplay').innerText = window.getReferralLink(); };
+        window.executeTelegramShare = function() { 
+            let url = "https://t.me/share/url?url=" + encodeURIComponent(window.getReferralLink()) + "&text=" + encodeURIComponent("Get FREE Carrom Items!"); 
+            window.tg?.openTelegramLink ? window.tg.openTelegramLink(url) : window.open(url, '_blank'); 
+        };
+
+        window.handleTTTClick = function(index) {
+            if (window.tttBoard[index] !== "" || !window.isTTTActive) return;
+            window.tttBoard[index] = "X"; 
+            document.getElementById("ttt" + index).innerHTML = '<span class="ttt-mark-x">X</span>';
+            
+            if (window.checkTTTWin("X")) { 
+                document.getElementById("tttStatusText").innerText = "🎉 You Won!"; 
+                document.getElementById("tttStatusText").style.color = "#00d4ff"; 
+                document.getElementById("tttClaimBtn").classList.remove("hidden"); 
+                window.isTTTActive = false; 
+                return; 
+            }
+            if (!window.tttBoard.includes("")) { 
+                document.getElementById("tttStatusText").innerText = "🤝 Tie!"; 
+                document.getElementById("tttResetBtn").classList.remove("hidden"); 
+                window.isTTTActive = false; 
+                return; 
+            }
+            
+            window.isTTTActive = false; 
+            document.getElementById("tttStatusText").innerText = "Bot is Thinking..."; 
+            setTimeout(window.executeBotMove, 600);
+        };
+
+        window.executeBotMove = function() {
+            let empty = []; 
+            for (let i = 0; i < 9; i++) if (window.tttBoard[i] === "") empty.push(i);
+            if (empty.length === 0) return;
+            
+            let choice = empty[Math.floor(Math.random() * empty.length)]; 
+            window.tttBoard[choice] = "O"; 
+            document.getElementById("ttt" + choice).innerHTML = '<span class="ttt-mark-o">O</span>';
+            
+            if (window.checkTTTWin("O")) { 
+                document.getElementById("tttStatusText").innerText = "❌ Bot Won!"; 
+                document.getElementById("tttStatusText").style.color = "#ff3366"; 
+                document.getElementById("tttResetBtn").classList.remove("hidden"); 
+                window.isTTTActive = false; 
+                return; 
+            }
+            if (!window.tttBoard.includes("")) { 
+                document.getElementById("tttStatusText").innerText = "🤝 Tie!"; 
+                document.getElementById("tttResetBtn").classList.remove("hidden"); 
+                window.isTTTActive = false; 
+                return; 
+            }
+            
+            window.isTTTActive = true; 
+            document.getElementById("tttStatusText").innerText = "Your Turn (X)";
+        };
+
+        window.checkTTTWin = function(mark) { 
+            return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(p => p.every(idx => window.tttBoard[idx] === mark)); 
+        };
+        
+        window.resetTTTGame = function() { 
+            window.tttBoard = ["","","","","","","","",""]; 
+            window.isTTTActive = true; 
+            document.getElementById("tttStatusText").innerText = "Your Turn (X)"; 
+            document.getElementById("tttStatusText").style.color = "#b0b5e3"; 
+            document.getElementById("tttClaimBtn").classList.add("hidden"); 
+            document.getElementById("tttResetBtn").classList.add("hidden"); 
+            for (let i = 0; i < 9; i++) document.getElementById("ttt" + i).innerText = ""; 
+        };
+
+        window.showScreen = function(screenId) {
+            document.querySelectorAll('body > div').forEach(el => { if(el.id !== 'profile-slide-screen') el.classList.add('hidden'); });
+            document.getElementById(screenId).classList.remove('hidden');
+            
+            if (screenId === 'spin-screen') { window.updateSpinLimitUI(); window.drawWheel(); }
+            else if (screenId === 'scratch-screen') { 
+                document.getElementById('scratchCanvas').classList.remove('hidden'); 
+                document.getElementById('scratch-success-view').classList.add('hidden'); 
+                document.getElementById('quickScratchBtn').classList.remove('hidden'); 
+                document.getElementById('scratchClaimBtn').classList.add('hidden'); 
+                document.getElementById('alreadyScratchedBtn').classList.add('hidden'); 
+                window.generateRandomScratchReward(); 
+                window.initScratchCanvas(); 
+            }
+            else if (screenId === 'reward-screen') { window.renderRewardScreenData(); }
+            else if (screenId === 'refer-screen') { window.setupReferralLinkUI(); }
+            else if (screenId === 'ttt-screen') { window.resetTTTGame(); }
+        };
+
+        window.renderRewardScreenData = function() {
+            let lastClaimStr = localStorage.getItem('last_reward_date'), 
+                streak = parseInt(localStorage.getItem('reward_streak')) || 0, 
+                todayStr = new Date().toDateString(), 
+                canClaim = false;
+                
+            if (!lastClaimStr) canClaim = true; 
+            else if (lastClaimStr === todayStr) canClaim = false; 
+            else { 
+                let yesterday = new Date(); yesterday.setDate(new Date().getDate() - 1); 
+                if (streak === 7 || lastClaimStr !== yesterday.toDateString()) { streak = 0; localStorage.setItem('reward_streak', 0); } 
+                canClaim = true; 
+            }
+            
+            const grid = document.getElementById('dailyRewardsGrid'); 
+            if(!grid) return; 
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const card = document.createElement('div'); 
+                card.className = 'reward-day-card' + (i === 6 ? ' day-7' : '') + (i < streak ? ' claimed' : '') + (i === streak && canClaim ? ' current-active' : '');
+                let icon = i < streak ? `<svg class="status-reward-svg" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="rgba(76,175,80,0.2)" stroke="#4caf50" stroke-width="2"/><path d="M8 12l3 3 5-5" stroke="#4caf50" stroke-width="2.5"/></svg>` : (i === streak && canClaim ? `<svg class="status-reward-svg" viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="12" rx="2" stroke="#00d4ff" stroke-width="2" fill="rgba(0,212,255,0.15)"/><path d="M3 7h18v3H3z" fill="#00d4ff"/><path d="M12 7v14M7 7c0-2 1.5-3 3-3s2 2 2 3M17 7c0-2-1.5-3-3-3s-2 2-2 3" stroke="#00d4ff" stroke-width="2"/></svg>` : `<svg class="status-reward-svg" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#ff9800" stroke-width="2" fill="rgba(255,152,0,0.1)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="#ff9800" stroke-width="2"/></svg>`);
+                card.innerHTML = `<div class="day-title">Day ${i + 1}</div><div class="day-coin-value"><div class="app-coin"></div>${window.staticDailyValues[i]}</div><div class="day-icon-status">${icon}</div>`; 
+                grid.appendChild(card);
+            }
+            
+            const mainClaimBtn = document.getElementById('claimRewardMainBtn'); 
+            if(mainClaimBtn) { 
+                mainClaimBtn.disabled = !canClaim; 
+                mainClaimBtn.innerText = canClaim ? `CLAIM DAY ${streak + 1}` : "COME BACK TOMORROW"; 
+            }
+        };
+
+        window.drawWheel = function() {
+            const canvas = document.getElementById('wheelCanvas'); 
+            if(!canvas) return; 
+            const ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, c = w / 2, arc = Math.PI / 4;
+            ctx.clearRect(0, 0, w, h);
+            for (let i = 0; i < 8; i++) {
+                ctx.fillStyle = window.colors[i]; 
+                ctx.beginPath(); 
+                ctx.moveTo(c, c); 
+                ctx.arc(c, c, c, i * arc, (i + 1) * arc); 
+                ctx.lineTo(c, c); 
+                ctx.fill();
+                
+                ctx.save(); 
+                ctx.fillStyle = 'white'; 
+                ctx.font = 'bold 16px Arial'; 
+                ctx.translate(c, c); 
+                ctx.rotate(i * arc + arc / 2); 
+                ctx.textAlign = 'right'; 
+                ctx.textBaseline = 'middle'; 
+                ctx.fillText(window.rewards[i], c - 30, 0); 
+                ctx.restore();
+            }
+        };
+
+        window.initScratchCanvas = function() {
+            const canvas = document.getElementById('scratchCanvas'); 
+            if(!canvas) return; 
+            const ctx = canvas.getContext('2d'), w = canvas.width = 320, h = canvas.height = 200;
+            ctx.globalCompositeOperation = 'source-over'; 
+            ctx.fillStyle = '#3a3a4a'; 
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = '#1e1e26'; 
+            
+            for (let x = 7; x < w; x += 14) {
+                for (let y = 7; y < h; y += 14) { 
+                    ctx.beginPath(); 
+                    ctx.arc(x, y, 4, 0, Math.PI * 2); 
+                    ctx.fill(); 
+                }
+            }
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; 
+            ctx.font = 'bold 18px Arial'; 
+            ctx.textAlign = 'center'; 
+            ctx.textBaseline = 'middle'; 
+            ctx.fillText('SCRATCH HERE', w / 2, h / 2);
+            window.setupScratchEvents(canvas, ctx);
+        };
+
+        window.setupScratchEvents = function(c, ctx) {
+            let getP = e => {
+                let rect = c.getBoundingClientRect();
+                let clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+                let clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+                let scaleX = c.width / rect.width;
+                let scaleY = c.height / rect.height;
+                return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+            };
+            
+            let start = e => { 
+                if (window.isScratchCompleted) return; 
+                window.isDrawing = true; 
+                let p = getP(e); 
+                window.lastX = p.x; 
+                window.lastY = p.y; 
+                ctx.globalCompositeOperation = 'destination-out'; 
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, 20, 0, Math.PI * 2); 
+                ctx.fill(); 
+            };
+            
+            let move = e => { 
+                if (!window.isDrawing || window.isScratchCompleted) return; 
+                e.preventDefault(); 
+                let p = getP(e); 
+                ctx.globalCompositeOperation = 'destination-out'; 
+                ctx.beginPath(); 
+                ctx.lineWidth = 40; 
+                ctx.lineCap = 'round'; 
+                ctx.lineJoin = 'round'; 
+                ctx.moveTo(window.lastX, window.lastY); 
+                ctx.lineTo(p.x, p.y); 
+                ctx.stroke(); 
+                window.lastX = p.x; 
+                window.lastY = p.y; 
+                window.checkScratchPercentage(c, ctx); 
+            };
+            
+            let end = () => window.isDrawing = false;
+
+            c.onmousedown = start; 
+            c.onmousemove = move; 
+            c.onmouseup = end;
+            c.onmouseleave = end;
+            
+            c.ontouchstart = start; 
+            c.ontouchmove = move; 
+            c.ontouchend = end;
+            c.ontouchcancel = end;
+        };
+
+        window.checkScratchPercentage = function(c, ctx) {
+            if (window.isScratchCompleted) return; 
+            const hits = ctx.getImageData(0, 0, c.width, c.height).data; 
+            let cleared = 0;
+            for (let i = 3; i < hits.length; i += 4) if (hits[i] === 0) cleared++;
+            
+            if (cleared / (c.width * c.height) > 0.30) { 
+                window.isScratchCompleted = true; 
+                window.isDrawing = false; 
+                c.classList.add('hidden'); 
+                document.getElementById('quickScratchBtn').classList.add('hidden'); 
+                document.getElementById('scratchClaimBtn').classList.remove('hidden'); 
+            }
+        };
+
+        window.triggerConfetti = function() {
+            const w = document.getElementById('scratchConfetti'); 
+            if(!w) return; 
+            w.innerHTML = ''; 
+            const cols = ['#ff3366', '#00d4ff', '#ffcc00', '#2bff6e', '#b500ff', '#ff6600'];
+            for (let i = 0; i < 30; i++) { 
+                let p = document.createElement('div'); 
+                p.className = 'confetti-piece'; 
+                p.style.left = Math.random() * 100 + '%'; 
+                p.style.backgroundColor = cols[Math.floor(Math.random() * cols.length)]; 
+                p.style.animationDuration = (Math.random() * 1.2 + 1.2) + 's'; 
+                p.style.animationDelay = (Math.random() * 0.8) + 's'; 
+                p.style.width = (Math.random() * 5 + 6) + 'px'; 
+                p.style.height = (Math.random() * 8 + 8) + 'px'; 
+                w.appendChild(p); 
+            }
+        };
+
+        window.initSliderEngine = function() {
+            const tr = document.getElementById('sliderTrack'), 
+                  hd = document.getElementById('sliderHandle'), 
+                  fl = document.getElementById('sliderFill'); 
+            if(!tr || !hd) return;
+            
+            let start = e => { 
+                window.isDraggingSlider = true; 
+                window.sliderStartX = (e.touches ? e.touches[0].clientX : e.clientX) - window.sliderCurrentX; 
+                hd.style.transition = 'none'; 
+                if(fl) fl.style.transition = 'none'; 
+            };
+            
+            let move = e => { 
+                if (!window.isDraggingSlider) return; 
+                let x = (e.touches ? e.touches[0].clientX : e.clientX) - window.sliderStartX, 
+                    mx = tr.clientWidth - hd.clientWidth - 8; 
+                x = Math.max(0, Math.min(x, mx)); 
+                window.sliderCurrentX = x; 
+                hd.style.transform = `translateX(${x}px)`; 
+                if(fl) fl.style.width = (x + 25) + 'px'; 
+            };
+            
+            let end = () => { 
+                if (!window.isDraggingSlider) return; 
+                window.isDraggingSlider = false; 
+                let mx = tr.clientWidth - hd.clientWidth - 8; 
+                if (window.sliderCurrentX >= mx * 0.93) { 
+                    hd.style.transition = 'transform 0.15s ease'; 
+                    hd.style.transform = `translateX(${mx}px)`; 
+                    if(fl) { 
+                        fl.style.transition = 'width 0.15s ease'; 
+                        fl.style.width = tr.clientWidth + 'px'; 
+                    } 
+                    setTimeout(() => { 
+                        window.processWithdrawItem(document.getElementById('detail-item-title').innerText); 
+                        window.resetSliderFrame(); 
+                    }, 180); 
+                } else {
+                    window.resetSliderFrame(); 
+                }
+            };
+            
+            hd.addEventListener('mousedown', start); 
+            window.addEventListener('mousemove', move); 
+            window.addEventListener('mouseup', end);
+            hd.addEventListener('touchstart', start, { passive: true }); 
+            window.addEventListener('touchmove', move, { passive: false }); 
+            window.addEventListener('touchend', end);
+        };
+
+        window.resetSliderFrame = function() { 
+            const hd = document.getElementById('sliderHandle'), 
+                  fl = document.getElementById('sliderFill'); 
+            if (!hd) return; 
+            window.isDraggingSlider = false; 
+            window.sliderCurrentX = 0; 
+            hd.style.transition = 'transform 0.3s cubic-bezier(0.1, 0.8, 0.1, 1)'; 
+            hd.style.transform = 'translateX(0px)'; 
+            if(fl) { 
+                fl.style.transition = 'width 0.3s cubic-bezier(0.1, 0.8, 0.1, 1)'; 
+                fl.style.width = '0px'; 
+            } 
+        };
+
+        window.openItemDetail = function(name, price, img, val) { 
+            document.getElementById('detail-item-title').innerText = name; 
+            document.getElementById('detail-item-img').src = img; 
+            document.getElementById('detail-reward-value').innerText = val; 
+            document.getElementById('detail-item-cost').innerText = "Coins Value : " + price; 
+            document.getElementById('detail-contact-input').value = ""; 
+            window.selectedItemRawCost = parseInt(price.replace(/,/g, '')) || 0; 
+            window.resetSliderFrame(); 
+            window.showScreen('item-detail-screen'); 
+        };
+
+        window.onload = function() { 
+            window.initSliderEngine(); 
+            window.syncUserProfile(); 
+        };
+    </script>
+</body>
+</html>
