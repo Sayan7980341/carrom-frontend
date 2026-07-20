@@ -461,7 +461,7 @@
             position: absolute; 
             top: -20px; 
             opacity: 0.8; 
-            animation: confettiFall linear forwards; 
+            animation: confettiFall linear infinite; 
             border-radius: 2px; 
         }
 
@@ -1625,7 +1625,13 @@
                 
                 // Wait 1.5s for Vercel S2S hook to finish, then fetch real verified balance
                 setTimeout(async () => {
+                    let expectedCoins = window.currentCoins + amount;
                     await window.syncUserProfile(); 
+                    
+                    if (window.currentCoins < expectedCoins) {
+                        window.currentCoins = expectedCoins;
+                        window.updateCoinsDisplay();
+                    }
 
                     if(gameType === 'spin') { window.updateSpinLimitUI(); alert(`Won ${amount} Coins!`); }
                     if(gameType === 'reward') { window.renderRewardScreenData(); alert(`Claimed ${amount} Coins.`); }
@@ -1636,7 +1642,6 @@
                         document.getElementById('scratch-success-view').classList.remove('hidden'); 
                         document.getElementById('alreadyScratchedBtn').classList.remove('hidden'); 
                         window.triggerConfetti(); 
-                        alert(`Won ${amount} Coins!`); 
                     }
                     if(gameType === 'ttt') { 
                         document.getElementById("tttClaimBtn").classList.add("hidden"); 
