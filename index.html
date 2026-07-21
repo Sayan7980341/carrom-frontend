@@ -1650,7 +1650,6 @@
                 }
 
                 // 4. DEFERRED ALERT (Allows custom screens to fully render first)
-                // 🛡️ INCREASED DELAY to 600ms so that WebView fully paints the screen before alert blocks it.
                 setTimeout(() => {
                     if(gameType === 'spin') { alert(`Won ${amount} Coins!`); }
                     if(gameType === 'reward') { alert(`Claimed ${amount} Coins.`); }
@@ -1748,33 +1747,12 @@
             
             if (window.AdsgramController) { 
                 window.isAdPlaying = true;
-
-                // 🛡️ PRE-EMPTIVE UI UPDATE: Ad aane se pehle hi background mein success screen lag jayega.
-                // Taki jab ad hate toh direct custom screen dikhe bina kisi flashing ke.
-                if (target === 'scratch') {
-                    document.getElementById('quickScratchBtn').classList.add('hidden');
-                    document.getElementById('scratchCanvas').classList.add('hidden');
-                    document.getElementById('scratchClaimBtn').classList.add('hidden'); 
-                    document.getElementById('scratch-success-view').classList.remove('hidden'); 
-                    document.getElementById('alreadyScratchedBtn').classList.remove('hidden'); 
-                    window.triggerConfetti(); 
-                }
                 
                 window.AdsgramController.show().then(() => {
                     window.isAdPlaying = false;
                     window.executeEarningLogic();
                 }).catch(async () => {
                     window.isAdPlaying = false;
-                    
-                    // REVERT UI: Agar user ad skip karta hai ya ad fail ho jati hai
-                    if (target === 'scratch') {
-                        document.getElementById('quickScratchBtn').classList.remove('hidden');
-                        document.getElementById('scratchCanvas').classList.remove('hidden');
-                        document.getElementById('scratch-success-view').classList.add('hidden'); 
-                        document.getElementById('alreadyScratchedBtn').classList.add('hidden'); 
-                        document.getElementById('scratchConfetti').innerHTML = '';
-                    }
-
                     await setDoc(doc(db, "users", window.activeTelegramId.toString()), { pending_reward: null }, { merge: true });
                     alert("Ad skipped or failed to load!");
                 }); 
