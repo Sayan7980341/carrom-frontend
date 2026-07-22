@@ -1667,7 +1667,10 @@
                     if(gameType === 'spin') { alert(`Won ${amount} Coins!`); }
                     if(gameType === 'reward') { alert(`Claimed ${amount} Coins.`); }
                     if(gameType === 'scratch') { alert(`Won ${amount} Coins!`); }
-                    if(gameType === 'ttt') { alert("300 Coins claimed!"); }
+                    if(gameType === 'ttt') { 
+                        alert("300 Coins claimed!"); 
+                        window.resetTTTGame();
+                    }
                     if(gameType === 'ads_screen') { alert("200 Coins added!"); }
                 }, 600); 
 
