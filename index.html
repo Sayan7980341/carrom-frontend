@@ -457,7 +457,6 @@
             z-index: 0; 
         }
 
-        /* 🛡️ FIXED CONFETTI ANIMATION: Now strictly falls infinitely without resetting to default properties */
         .confetti-piece { 
             position: absolute; 
             top: -20px; 
@@ -1574,14 +1573,26 @@
                 if (userSnapshot.exists()) {
                     const data = userSnapshot.data();
                     window.currentCoins = data.coins || 0;
-                    localStorage.setItem('spin_count_left', data.spin_count_left ?? 100);
+                    
+                    let todayStr = new Date().toDateString();
+                    if (data.last_spin_date !== todayStr) {
+                        localStorage.setItem('spin_count_left', 100);
+                        localStorage.setItem('last_spin_date', todayStr);
+                        updateDoc(userDocRef, { spin_count_left: 100, last_spin_date: todayStr }).catch(e => console.error(e));
+                    } else {
+                        localStorage.setItem('spin_count_left', data.spin_count_left ?? 100);
+                        localStorage.setItem('last_spin_date', data.last_spin_date);
+                    }
+
                     localStorage.setItem('reward_streak', data.reward_streak ?? 0);
                     localStorage.setItem('last_reward_date', data.last_reward_date || "");
                     document.getElementById('editProfileWhatsapp').value = data.whatsapp || "";
                 } else {
                     window.currentCoins = 0;
-                    await setDoc(userDocRef, { telegram_id: window.activeTelegramId, username: window.activeUsername, coins: 0, whatsapp: "", spin_count_left: 100, last_spin_date: new Date().toDateString(), reward_streak: 0, last_reward_date: "" });
+                    let todayStr = new Date().toDateString();
+                    await setDoc(userDocRef, { telegram_id: window.activeTelegramId, username: window.activeUsername, coins: 0, whatsapp: "", spin_count_left: 100, last_spin_date: todayStr, reward_streak: 0, last_reward_date: "" });
                     localStorage.setItem('spin_count_left', 100); 
+                    localStorage.setItem('last_spin_date', todayStr);
                     localStorage.setItem('reward_streak', 0); 
                     localStorage.setItem('last_reward_date', "");
                 }
@@ -1605,15 +1616,17 @@
             }
         };
 
-        // 🛡️ MODIFIED: Instantly updates UI, then safely syncs with Backend later
         window.creditCoinsDirectly = async function(amount, gameType) {
             try {
                 let updatePayload = {};
                 
                 if (gameType === 'spin') { 
                     let leftSpins = parseInt(localStorage.getItem('spin_count_left')) - 1; 
+                    let todayStr = new Date().toDateString();
                     localStorage.setItem('spin_count_left', leftSpins); 
+                    localStorage.setItem('last_spin_date', todayStr);
                     updatePayload.spin_count_left = leftSpins; 
+                    updatePayload.last_spin_date = todayStr;
                 } 
                 else if (gameType === 'reward') { 
                     let streak = parseInt(localStorage.getItem('reward_streak')) + 1; 
@@ -1784,6 +1797,7 @@
             if (localStorage.getItem('last_spin_date') !== todayStr) { 
                 localStorage.setItem('spin_count_left', 100); 
                 localStorage.setItem('last_spin_date', todayStr); 
+                updateDoc(doc(db, "users", window.activeTelegramId.toString()), { spin_count_left: 100, last_spin_date: todayStr }).catch(e => console.error(e));
             } 
         };
         
