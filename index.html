@@ -1838,7 +1838,7 @@
             window.isScratchCompleted = false;
         };
 
-        window.getReferralLink = function() { return "https://t.me/CarromRedem_bot/CarromRedeem?startapp=ref_" + window.activeTelegramId; };
+        window.getReferralLink = function() { return "https://t.me/CarromRedem_bot?start=ref_" + window.activeTelegramId; };
         window.setupReferralLinkUI = function() { if(document.getElementById('refLinkDisplay')) document.getElementById('refLinkDisplay').innerText = window.getReferralLink(); };
         window.executeTelegramShare = function() { 
             let url = "https://t.me/share/url?url=" + encodeURIComponent(window.getReferralLink()) + "&text=" + encodeURIComponent("Get FREE Carrom Items!"); 
