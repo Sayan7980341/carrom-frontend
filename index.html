@@ -1515,7 +1515,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBiaYzra-PFiwwObp_POTZdIt9OICT0krw",
@@ -1565,6 +1565,17 @@
         window.colors = ['#6e473b', '#8e24aa', '#ff5722', '#ffb300', '#388e3c', '#00a1ff', '#7e57c2', '#e91e63']; 
         window.staticDailyValues = [100, 300, 400, 500, 600, 700, 1000];
         window.AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "39015" }) : null;
+
+        // Realtime User Balance Listener
+        window.listenToUserUpdates = function() {
+            onSnapshot(doc(db, "users", window.activeTelegramId.toString()), (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    window.currentCoins = data.coins || 0;
+                    window.updateCoinsDisplay(); // Auto UI updates on S2S webhook trigger
+                }
+            });
+        };
 
         window.syncUserProfile = async function() {
             try {
@@ -2175,6 +2186,7 @@
         window.onload = function() { 
             window.initSliderEngine(); 
             window.syncUserProfile(); 
+            window.listenToUserUpdates(); 
         };
     </script>
 </body>
