@@ -32,6 +32,107 @@
             --btn-active-bottom: #0f1028;
         }
 
+        /* ------------------------------------------
+           LIGHT THEME OVERRIDES
+           ------------------------------------------ */
+        [data-theme="light"] {
+            --bg-main-top: #f5f7fa;
+            --bg-main-bottom: #e4e8f0;
+            --btn-grad-top: #ffffff;
+            --btn-grad-bottom: #f0f2f5;
+            --btn-active-top: #eef0f5;
+            --btn-active-bottom: #e4e6eb;
+            --text-white: #1a1a1a;
+            --text-gray: #666666;
+            --neon-blue-rgb: 0, 102, 204;
+            --neon-purple-rgb: 102, 0, 204;
+        }
+        [data-theme="light"] .coin-header, [data-theme="light"] .profile-header, [data-theme="light"] .balance-card, [data-theme="light"] .scratch-card-box, [data-theme="light"] .refer-info-card, [data-theme="light"] .refer-link-container, [data-theme="light"] .ttt-board-outer, [data-theme="light"] .preview-showcase-box, [data-theme="light"] .profile-menu-item, [data-theme="light"] .profile-icon-placement, [data-theme="light"] .profile-coin-wrap, [data-theme="light"] .withdraw-square-box, [data-theme="light"] .reward-day-card {
+            background: #ffffff;
+            border-color: #d1d5db;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        [data-theme="light"] .center-spin-btn {
+            background: #ffffff;
+            border-color: #0066cc;
+            box-shadow: 0 0 15px rgba(0, 102, 204, 0.3);
+        }
+        [data-theme="light"] #wheelCanvas {
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        [data-theme="light"] .refer-link-box-display, [data-theme="light"] .preview-contact-input-field, [data-theme="light"] .ttt-cell-block, [data-theme="light"] .read-only-balance {
+            background: #f3f4f6;
+            color: #1a1a1a;
+            border-color: #d1d5db;
+        }
+        [data-theme="light"] .profile-slide-overlay {
+            background: #f9fafb;
+            border-left: 1px solid #d1d5db;
+        }
+        [data-theme="light"] .btn-svg-icon {
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+        }
+        [data-theme="light"] .reward-day-card.current-active {
+            background: #f0f7ff;
+            border-color: #0066cc;
+        }
+        [data-theme="light"] .reward-day-card.day-7 {
+            background: linear-gradient(135deg, #e0e7ff 0%, #e0caff 100%);
+        }
+        [data-theme="light"] .withdraw-square-box:active, [data-theme="light"] .theme-option:active {
+            background: #f3f4f6;
+        }
+
+        /* ------------------------------------------
+           DARK THEME OVERRIDES
+           ------------------------------------------ */
+        [data-theme="dark"] {
+            --bg-main-top: #121212;
+            --bg-main-bottom: #000000;
+            --btn-grad-top: #1e1e1e;
+            --btn-grad-bottom: #121212;
+            --btn-active-top: #2a2a2a;
+            --btn-active-bottom: #1a1a1a;
+            --text-white: #e0e0e0;
+            --text-gray: #888888;
+            --neon-blue-rgb: 255, 255, 255;
+            --neon-purple-rgb: 150, 150, 150;
+        }
+        [data-theme="dark"] .coin-header, [data-theme="dark"] .profile-header, [data-theme="dark"] .balance-card, [data-theme="dark"] .scratch-card-box, [data-theme="dark"] .refer-info-card, [data-theme="dark"] .refer-link-container, [data-theme="dark"] .ttt-board-outer, [data-theme="dark"] .preview-showcase-box, [data-theme="dark"] .profile-menu-item, [data-theme="dark"] .profile-icon-placement, [data-theme="dark"] .profile-coin-wrap, [data-theme="dark"] .withdraw-square-box, [data-theme="dark"] .reward-day-card {
+            background: #181818;
+            border-color: #333333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        [data-theme="dark"] .center-spin-btn {
+            background: #111111;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        [data-theme="dark"] #wheelCanvas {
+            border-color: #222222;
+            box-shadow: 0 0 20px rgba(255,255,255,0.05);
+        }
+        [data-theme="dark"] .refer-link-box-display, [data-theme="dark"] .preview-contact-input-field, [data-theme="dark"] .ttt-cell-block, [data-theme="dark"] .read-only-balance {
+            background: #0a0a0a;
+            color: #ffffff;
+            border-color: #333333;
+        }
+        [data-theme="dark"] .profile-slide-overlay {
+            background: #0f0f0f;
+            border-left: 1px solid #333333;
+        }
+        [data-theme="dark"] .reward-day-card.current-active {
+            background: #252525;
+            border-color: #ffffff;
+        }
+        [data-theme="dark"] .reward-day-card.day-7 {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+        }
+        [data-theme="dark"] .withdraw-square-box:active, [data-theme="dark"] .theme-option:active {
+            background: #222222;
+        }
+
         /* ==========================================
            1. CORE APPLICATION BASE LAYOUT
            ========================================== */
@@ -52,6 +153,7 @@
             min-height: 100vh;
             user-select: none; 
             -webkit-user-select: none; 
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         input, textarea { 
@@ -74,14 +176,14 @@
             height: 22px; 
             background: radial-gradient(circle at 35% 35%, #fff5be 0%, #ffd700 40%, #ff9900 80%, #b36600 100%); 
             border-radius: 50%; 
-            border: 1.5px solid var(--text-white); 
+            border: 1.5px solid #ffffff; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.4), inset 0 -1.5px 3px rgba(0,0,0,0.4), inset 0 1.5px 2px rgba(255,255,255,0.6); 
             vertical-align: middle; 
         }
 
         .app-coin::before { 
             content: '★'; 
-            color: var(--text-white); 
+            color: #ffffff; 
             font-size: 12px; 
             line-height: 1; 
             margin-top: -1px; 
@@ -178,7 +280,7 @@
         .btn-vector-arrow { 
             width: 20px; 
             height: 20px; 
-            color: rgba(255,255,255,0.35); 
+            color: rgba(165,170,222,0.35); 
             transition: transform 0.25s ease, color 0.25s ease; 
             display: block; 
             flex-shrink: 0; 
@@ -236,7 +338,7 @@
         }
 
         .back-btn:active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(165,170,222,0.1);
         }
 
         .spin-title { 
@@ -356,7 +458,7 @@
             align-items: center; 
             justify-content: center; 
             margin: 10px auto 25px auto; 
-            border: 1px solid rgba(255,255,255,0.08); 
+            border: 1px solid rgba(165,170,222,0.08); 
         }
 
         .scratch-under-preview { 
@@ -434,8 +536,8 @@
         }
 
         .already-scratched-container { 
-            border: 2px solid rgba(255,255,255,0.2); 
-            color: rgba(255,255,255,0.4); 
+            border: 2px solid rgba(165,170,222,0.2); 
+            color: var(--text-gray); 
             padding: 14px; 
             border-radius: 30px; 
             font-weight: bold; 
@@ -543,7 +645,7 @@
 
         .reward-day-card { 
             background: linear-gradient(135deg, #1e1e38 0%, #111126 100%); 
-            border: 1px solid rgba(255,255,255,0.08); 
+            border: 1px solid rgba(165,170,222,0.08); 
             border-radius: 12px; 
             padding: 12px 6px; 
             display: flex; 
@@ -556,7 +658,7 @@
         .reward-day-card.day-7 { 
             grid-column: span 3; 
             background: linear-gradient(135deg, #3b429f 0%, var(--neon-purple) 100%); 
-            border: 1px solid rgba(255,255,255,0.2); 
+            border: 1px solid rgba(165,170,222,0.2); 
         }
 
         .reward-day-card.claimed { 
@@ -638,7 +740,7 @@
 
         .refer-body-text { 
             font-size: 14px; 
-            color: #d1d5db; 
+            color: var(--text-gray); 
         }
 
         .refer-steps-box { 
@@ -939,7 +1041,7 @@
             right: 0; 
             width: 70%; 
             height: 100vh; 
-            background: radial-gradient(circle at top center, #14163c 0%, #08081a 100%); 
+            background: radial-gradient(circle at top center, var(--bg-main-top) 0%, var(--bg-main-bottom) 100%); 
             z-index: 999; 
             transform: translateX(100%); 
             padding: 5px 15px 20px 15px; 
@@ -1084,7 +1186,7 @@
         }
 
         .menu-item-arrow { 
-            color: rgba(255,255,255,0.35); 
+            color: rgba(165,170,222,0.35); 
             font-size: 16px; 
             font-weight: bold; 
         }
@@ -1109,8 +1211,13 @@
             filter: drop-shadow(0 0 5px rgba(43,255,110,0.7)); 
         }
 
+        .icon-settings { 
+            stroke: var(--gold); 
+            filter: drop-shadow(0 0 5px rgba(var(--gold-rgb),0.7)); 
+        }
+
         /* ==========================================
-           15. EDIT DATA LAYOUT ENTRY INTERFACE
+           15. EDIT DATA LAYOUT & SETTINGS INTERFACE
            ========================================== */
         .edit-profile-form { 
             width: 100%; 
@@ -1172,6 +1279,76 @@
             margin-bottom: 25px; 
             cursor: pointer; 
             text-shadow: 0 0 8px rgba(var(--neon-blue-rgb),0.4); 
+        }
+
+        /* NEW SETTINGS UI STYLES */
+        .settings-container {
+            width: 100%;
+            max-width: 340px;
+            margin: 25px auto;
+            text-align: left;
+            padding: 0 5px;
+        }
+
+        .settings-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-gray);
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(165,170,222,0.2);
+            padding-bottom: 8px;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%);
+            border: 1px solid rgba(var(--neon-blue-rgb), 0.15);
+            cursor: pointer;
+            color: var(--text-white);
+            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-option:active {
+            transform: scale(0.97);
+        }
+
+        .theme-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .theme-circle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--text-white);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .theme-option.selected-theme {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(var(--neon-blue-rgb), 0.25);
+            background: linear-gradient(135deg, var(--btn-active-top) 0%, var(--btn-active-bottom) 100%);
+        }
+
+        .theme-option.selected-theme .theme-circle::after {
+            opacity: 1;
         }
     </style>
 </head>
@@ -1428,7 +1605,7 @@
             <hr class="preview-item-divider">
             <div class="preview-item-row-data">
                 <span class="preview-item-label">Description :</span>
-                <span style="color: #d1d5db; font-size: 13.5px; line-height: 1.45; display: block; font-weight: 500;">Your redeem request will be processed manually by our administration crew. The secure account credentials or tool activation login keys will be successfully delivered to you within 24-48 hours max. Please provide your correct information below.</span>
+                <span style="color: var(--text-gray); font-size: 13.5px; line-height: 1.45; display: block; font-weight: 500;">Your redeem request will be processed manually by our administration crew. The secure account credentials or tool activation login keys will be successfully delivered to you within 24-48 hours max. Please provide your correct information below.</span>
             </div>
             <hr class="preview-item-divider">
             <div class="preview-item-row-data" style="width: 100%; padding-bottom: 2px;">
@@ -1444,6 +1621,33 @@
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                 </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW THEME SETTINGS SCREEN -->
+    <div id="settings-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Settings</div>
+        </div>
+        
+        <div class="settings-container">
+            <div class="settings-section-title">App Theme Appearance</div>
+            
+            <div class="theme-option" onclick="setTheme('default')" id="theme-default">
+                <span class="theme-circle" style="background: #10112e; border-color: #00d4ff;"></span>
+                <span>Neon Blue (Default)</span>
+            </div>
+            
+            <div class="theme-option" onclick="setTheme('dark')" id="theme-dark">
+                <span class="theme-circle" style="background: #111111; border-color: #555555;"></span>
+                <span>Midnight Dark Mode</span>
+            </div>
+            
+            <div class="theme-option" onclick="setTheme('light')" id="theme-light">
+                <span class="theme-circle" style="background: #ffffff; border-color: #cccccc;"></span>
+                <span>Clean Light Mode</span>
             </div>
         </div>
     </div>
@@ -1510,6 +1714,13 @@
                 </div>
                 <div class="menu-item-arrow">→</div>
             </div>
+            <div class="profile-menu-item" onclick="showScreen('settings-screen'); closeProfileSlide();">
+                <div class="menu-item-left">
+                    <svg class="profile-list-icon icon-settings" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>Settings</span>
+                </div>
+                <div class="menu-item-arrow">→</div>
+            </div>
         </div>
     </div>
 
@@ -1561,21 +1772,36 @@
         window.sliderCurrentX = 0; 
         window.selectedItemRawCost = 0;
         
-        // UPDATED: Order to exactly match the provided image (117073.jpg)
         window.rewards = [650, 800, 900, 450, 1000, 100, 250, 500, 300, 350, 400]; 
-        // UPDATED: Colors rearranged to perfectly match the new amounts sequence based on the image
         window.colors = ['#009688', '#c0ca33', '#f06292', '#795548', '#8e24aa', '#ff5722', '#ffb300', '#4caf50', '#03a9f4', '#7e57c2', '#e91e63']; 
         
         window.staticDailyValues = [100, 300, 400, 500, 600, 700, 1000];
         window.AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "39015" }) : null;
 
-        // Realtime User Balance Listener
+        // THEME LOGIC INITIALIZATION
+        window.setTheme = function(themeName) {
+            localStorage.setItem('app_theme', themeName);
+            document.body.setAttribute('data-theme', themeName);
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('selected-theme'));
+            let selectedEl = document.getElementById('theme-' + themeName);
+            if (selectedEl) selectedEl.classList.add('selected-theme');
+        };
+
+        window.loadSavedTheme = function() {
+            let savedTheme = localStorage.getItem('app_theme') || 'default';
+            document.body.setAttribute('data-theme', savedTheme);
+            setTimeout(() => {
+                let selectedEl = document.getElementById('theme-' + savedTheme);
+                if (selectedEl) selectedEl.classList.add('selected-theme');
+            }, 100);
+        };
+
         window.listenToUserUpdates = function() {
             onSnapshot(doc(db, "users", window.activeTelegramId.toString()), (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
                     window.currentCoins = data.coins || 0;
-                    window.updateCoinsDisplay(); // Auto UI updates on S2S webhook trigger
+                    window.updateCoinsDisplay();
                 }
             });
         };
@@ -1650,12 +1876,10 @@
                     updatePayload.last_reward_date = new Date().toDateString(); 
                 }
 
-                // 2. BACKGROUND FIREBASE SYNC
                 if(Object.keys(updatePayload).length > 0) {
                     updateDoc(doc(db, "users", window.activeTelegramId.toString()), updatePayload).catch(e => console.error(e)); 
                 }
 
-                // 3. INSTANT SCREEN CHANGES
                 if(gameType === 'spin') { window.updateSpinLimitUI(); }
                 if(gameType === 'reward') { window.renderRewardScreenData(); }
                 if(gameType === 'scratch') { 
@@ -1671,7 +1895,6 @@
                     document.getElementById("tttResetBtn").classList.remove("hidden"); 
                 }
 
-                // 4. DEFERRED ALERT (Allows custom screens to fully render first)
                 setTimeout(() => {
                     if(gameType === 'spin') { alert(`Won ${amount} Coins!`); }
                     if(gameType === 'reward') { alert(`Claimed ${amount} Coins.`); }
@@ -1718,7 +1941,7 @@
         
         window.triggerAdsgramVideo = async function(target) {
             if (window.isAdPlaying) return; 
-            window.isAdPlaying = true; // Lock immediately to prevent double-clicks
+            window.isAdPlaying = true;
 
             if (target === 'spin') { 
                 window.checkAndResetSpins(); 
@@ -1730,13 +1953,13 @@
                 let spinRoll = Math.random();
                 let spinAmt;
                 
-                if (spinRoll < 0.80) { // 80% Chance (100 - 450)
+                if (spinRoll < 0.80) { 
                     let group1 = [100, 250, 300, 350, 400, 450];
                     spinAmt = group1[Math.floor(Math.random() * group1.length)];
-                } else if (spinRoll < 0.95) { // 15% Chance (500 - 800)
+                } else if (spinRoll < 0.95) { 
                     let group2 = [500, 650, 800];
                     spinAmt = group2[Math.floor(Math.random() * group2.length)];
-                } else { // 5% Chance (900 - 1000)
+                } else { 
                     let group3 = [900, 1000];
                     spinAmt = group3[Math.floor(Math.random() * group3.length)];
                 }
@@ -1747,7 +1970,6 @@
                 
             } else if (target === 'scratch') {
             } else if (target === 'reward') {
-                // Strict check to prevent multiple claims on the same day completely
                 if (localStorage.getItem('last_reward_date') === new Date().toDateString()) {
                     window.isAdPlaying = false;
                     return;
@@ -1830,7 +2052,7 @@
             if(tx) { 
                 if (leftSpins > 0) { 
                     tx.innerText = `Daily Spins left: ${leftSpins}`; 
-                    tx.style.color = "#b0b5e3"; 
+                    tx.style.color = "var(--text-gray)"; 
                     if(spinBtn) spinBtn.classList.remove('disabled-state'); 
                 } else { 
                     tx.innerText = "Daily spins over! Come back tomorrow."; 
@@ -1914,7 +2136,7 @@
             window.tttBoard = ["","","","","","","","",""]; 
             window.isTTTActive = true; 
             document.getElementById("tttStatusText").innerText = "Your Turn (X)"; 
-            document.getElementById("tttStatusText").style.color = "#b0b5e3"; 
+            document.getElementById("tttStatusText").style.color = "var(--text-gray)"; 
             document.getElementById("tttClaimBtn").classList.add("hidden"); 
             document.getElementById("tttResetBtn").classList.add("hidden"); 
             for (let i = 0; i < 9; i++) document.getElementById("ttt" + i).innerText = ""; 
@@ -1972,7 +2194,6 @@
             }
         };
 
-        // UPDATED: Enhanced drawWheel function for better quality and exact image representation
         window.drawWheel = function() {
             const canvas = document.getElementById('wheelCanvas'); 
             if(!canvas) return; 
@@ -1990,17 +2211,14 @@
                 ctx.lineTo(c, c); 
                 ctx.fill();
                 
-                // QUALITY IMPROVEMENT: Adding a subtle border between slices
                 ctx.lineWidth = 1;
                 ctx.strokeStyle = 'rgba(0,0,0,0.15)';
                 ctx.stroke();
                 
                 ctx.save(); 
                 ctx.fillStyle = 'white'; 
-                // QUALITY IMPROVEMENT: Softer, casual font like the image 
                 ctx.font = 'bold 18px "Comic Sans MS", "Chalkboard SE", sans-serif'; 
                 
-                // QUALITY IMPROVEMENT: Adding shadow to text for premium feel
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
                 ctx.shadowBlur = 4;
                 ctx.shadowOffsetX = 1;
@@ -2196,11 +2414,12 @@
             document.getElementById('detail-item-cost').innerText = "Coins Value : " + price; 
             document.getElementById('detail-contact-input').value = ""; 
             window.selectedItemRawCost = parseInt(price.replace(/,/g, '')) || 0; 
-            window.resetxSliderFrame(); 
+            window.resetSliderFrame(); 
             window.showScreen('item-detail-screen'); 
         };
 
         window.onload = function() { 
+            window.loadSavedTheme(); // Load Theme on Startup
             window.initSliderEngine(); 
             window.syncUserProfile(); 
             window.listenToUserUpdates(); 
