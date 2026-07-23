@@ -1635,7 +1635,7 @@
                 let updatePayload = {};
                 
                 if (gameType === 'spin') { 
-                    let leftSpins = parseInt(localStorage.getItem('spin_count_left')) - 1; 
+                    let leftSpins = (parseInt(localStorage.getItem('spin_count_left')) || 100) - 1; 
                     let todayStr = new Date().toDateString();
                     localStorage.setItem('spin_count_left', leftSpins); 
                     localStorage.setItem('last_spin_date', todayStr);
@@ -1649,11 +1649,6 @@
                     updatePayload.reward_streak = streak; 
                     updatePayload.last_reward_date = new Date().toDateString(); 
                 }
-
-                // 1. INSTANT COIN UPDATE FOR UI 
-                let expectedCoins = window.currentCoins + amount;
-                window.currentCoins = expectedCoins;
-                window.updateCoinsDisplay();
 
                 // 2. BACKGROUND FIREBASE SYNC
                 if(Object.keys(updatePayload).length > 0) {
@@ -1687,25 +1682,6 @@
                     }
                     if(gameType === 'ads_screen') { alert("200 Coins added!"); }
                 }, 600); 
-
-                // 5. BACKGROUND SYNC SAFETY
-                setTimeout(async () => {
-                    let optimisticCoins = window.currentCoins;
-                    try {
-                        const userDocRef = doc(db, "users", window.activeTelegramId.toString());
-                        const userSnapshot = await getDoc(userDocRef);
-                        if (userSnapshot.exists()) {
-                            let dbCoins = userSnapshot.data().coins || 0;
-                            if (dbCoins >= optimisticCoins) {
-                                window.currentCoins = dbCoins;
-                            } else {
-                                window.currentCoins = optimisticCoins;
-                                updateDoc(userDocRef, { coins: optimisticCoins }).catch(e=>console.error(e));
-                            }
-                            window.updateCoinsDisplay();
-                        }
-                    } catch (e) {}
-                }, 3000);
 
             } catch (err) { 
                 console.error("Error updating local UI records:", err);
