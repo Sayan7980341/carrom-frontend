@@ -1561,8 +1561,11 @@
         window.sliderCurrentX = 0; 
         window.selectedItemRawCost = 0;
         
-        window.rewards = [450, 1000, 100, 250, 500, 300, 350, 400]; 
-        window.colors = ['#6e473b', '#8e24aa', '#ff5722', '#ffb300', '#388e3c', '#00a1ff', '#7e57c2', '#e91e63']; 
+        // UPDATED: Order to exactly match the provided image (117073.jpg)
+        window.rewards = [650, 800, 900, 450, 1000, 100, 250, 500, 300, 350, 400]; 
+        // UPDATED: Colors rearranged to perfectly match the new amounts sequence based on the image
+        window.colors = ['#009688', '#c0ca33', '#f06292', '#795548', '#8e24aa', '#ff5722', '#ffb300', '#4caf50', '#03a9f4', '#7e57c2', '#e91e63']; 
+        
         window.staticDailyValues = [100, 300, 400, 500, 600, 700, 1000];
         window.AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "39015" }) : null;
 
@@ -1747,9 +1750,25 @@
                     window.isAdPlaying = false; 
                     return;
                 }
-                const randomIndex = Math.floor(Math.random() * 8);
+                
+                let spinRoll = Math.random();
+                let spinAmt;
+                
+                if (spinRoll < 0.80) { // 80% Chance (100 - 450)
+                    let group1 = [100, 250, 300, 350, 400, 450];
+                    spinAmt = group1[Math.floor(Math.random() * group1.length)];
+                } else if (spinRoll < 0.95) { // 15% Chance (500 - 800)
+                    let group2 = [500, 650, 800];
+                    spinAmt = group2[Math.floor(Math.random() * group2.length)];
+                } else { // 5% Chance (900 - 1000)
+                    let group3 = [900, 1000];
+                    spinAmt = group3[Math.floor(Math.random() * group3.length)];
+                }
+                
+                const randomIndex = window.rewards.indexOf(spinAmt);
                 window.currentRewardAmount = window.rewards[randomIndex];
                 window.spinTargetIndex = randomIndex;
+                
             } else if (target === 'scratch') {
             } else if (target === 'reward') {
                 // Strict check to prevent multiple claims on the same day completely
@@ -1803,7 +1822,11 @@
                 const canvas = document.getElementById('wheelCanvas'); 
                 const randomIndex = window.spinTargetIndex || 0;
                 window.currentFullSpins += 5; 
-                if(canvas) canvas.style.transform = `rotate(${(360 * window.currentFullSpins) + 247.5 - (randomIndex * 45)}deg)`;
+                
+                let sliceAngle = 360 / window.rewards.length;
+                let offset = 270 - (sliceAngle / 2);
+                
+                if(canvas) canvas.style.transform = `rotate(${(360 * window.currentFullSpins) + offset - (randomIndex * sliceAngle)}deg)`;
                 setTimeout(() => { window.creditCoinsDirectly(window.currentRewardAmount, 'spin'); window.isSpinning = false; }, 4000);
             } 
             else if (window.currentAdTarget === 'scratch') { window.creditCoinsDirectly(window.currentRewardAmount, 'scratch'); } 
@@ -1973,12 +1996,17 @@
             }
         };
 
+        // UPDATED: Enhanced drawWheel function for better quality and exact image representation
         window.drawWheel = function() {
             const canvas = document.getElementById('wheelCanvas'); 
             if(!canvas) return; 
-            const ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, c = w / 2, arc = Math.PI / 4;
+            
+            const ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, c = w / 2;
+            const totalSlices = window.rewards.length;
+            const arc = (Math.PI * 2) / totalSlices;
+            
             ctx.clearRect(0, 0, w, h);
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < totalSlices; i++) {
                 ctx.fillStyle = window.colors[i]; 
                 ctx.beginPath(); 
                 ctx.moveTo(c, c); 
@@ -1986,14 +2014,27 @@
                 ctx.lineTo(c, c); 
                 ctx.fill();
                 
+                // QUALITY IMPROVEMENT: Adding a subtle border between slices
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.stroke();
+                
                 ctx.save(); 
                 ctx.fillStyle = 'white'; 
-                ctx.font = 'bold 16px Arial'; 
+                // QUALITY IMPROVEMENT: Softer, casual font like the image 
+                ctx.font = 'bold 18px "Comic Sans MS", "Chalkboard SE", sans-serif'; 
+                
+                // QUALITY IMPROVEMENT: Adding shadow to text for premium feel
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
                 ctx.translate(c, c); 
                 ctx.rotate(i * arc + arc / 2); 
                 ctx.textAlign = 'right'; 
                 ctx.textBaseline = 'middle'; 
-                ctx.fillText(window.rewards[i], c - 30, 0); 
+                ctx.fillText(window.rewards[i], c - 20, 0); 
                 ctx.restore();
             }
         };
@@ -2179,7 +2220,7 @@
             document.getElementById('detail-item-cost').innerText = "Coins Value : " + price; 
             document.getElementById('detail-contact-input').value = ""; 
             window.selectedItemRawCost = parseInt(price.replace(/,/g, '')) || 0; 
-            window.resetSliderFrame(); 
+            window.resetxSliderFrame(); 
             window.showScreen('item-detail-screen'); 
         };
 
