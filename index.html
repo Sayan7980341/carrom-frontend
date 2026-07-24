@@ -32,57 +32,9 @@
             --btn-active-bottom: #0f1028;
         }
 
-        /* ------------------------------------------
-           LIGHT THEME OVERRIDES
-           ------------------------------------------ */
-        [data-theme="light"] {
-            --bg-main-top: #f5f7fa;
-            --bg-main-bottom: #e4e8f0;
-            --btn-grad-top: #ffffff;
-            --btn-grad-bottom: #f0f2f5;
-            --btn-active-top: #eef0f5;
-            --btn-active-bottom: #e4e6eb;
-            --text-white: #1a1a1a;
-            --text-gray: #666666;
-            --neon-blue-rgb: 0, 102, 204;
-            --neon-purple-rgb: 102, 0, 204;
-        }
-        [data-theme="light"] .coin-header, [data-theme="light"] .profile-header, [data-theme="light"] .balance-card, [data-theme="light"] .scratch-card-box, [data-theme="light"] .refer-info-card, [data-theme="light"] .refer-link-container, [data-theme="light"] .ttt-board-outer, [data-theme="light"] .preview-showcase-box, [data-theme="light"] .profile-menu-item, [data-theme="light"] .profile-icon-placement, [data-theme="light"] .profile-coin-wrap, [data-theme="light"] .withdraw-square-box, [data-theme="light"] .reward-day-card {
-            background: #ffffff;
-            border-color: #d1d5db;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        [data-theme="light"] .center-spin-btn {
-            background: #ffffff;
-            border-color: #0066cc;
-            box-shadow: 0 0 15px rgba(0, 102, 204, 0.3);
-        }
-        [data-theme="light"] #wheelCanvas {
-            border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        [data-theme="light"] .refer-link-box-display, [data-theme="light"] .preview-contact-input-field, [data-theme="light"] .ttt-cell-block, [data-theme="light"] .read-only-balance {
-            background: #f3f4f6;
-            color: #1a1a1a;
-            border-color: #d1d5db;
-        }
-        [data-theme="light"] .profile-slide-overlay {
-            background: #f9fafb;
-            border-left: 1px solid #d1d5db;
-        }
-        [data-theme="light"] .btn-svg-icon {
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
-        }
-        [data-theme="light"] .reward-day-card.current-active {
-            background: #f0f7ff;
-            border-color: #0066cc;
-        }
-        [data-theme="light"] .reward-day-card.day-7 {
-            background: linear-gradient(135deg, #e0e7ff 0%, #e0caff 100%);
-        }
-        [data-theme="light"] .withdraw-square-box:active, [data-theme="light"] .theme-option:active {
-            background: #f3f4f6;
-        }
+        /* Helper Classes for Dynamic SVG Icons */
+        .svg-icon-white-stroke { stroke: #ffffff; }
+        .svg-icon-white-fill { fill: #ffffff; }
 
         /* ------------------------------------------
            DARK THEME OVERRIDES
@@ -1645,9 +1597,11 @@
                 <span>Midnight Dark Mode</span>
             </div>
             
-            <div class="theme-option" onclick="setTheme('light')" id="theme-light">
-                <span class="theme-circle" style="background: #ffffff; border-color: #cccccc;"></span>
-                <span>Clean Light Mode</span>
+            <div class="settings-section-title" style="margin-top: 30px; color: #ff4444; border-bottom-color: rgba(255,68,68,0.2);">Account Recovery</div>
+            
+            <div class="theme-option" onclick="resetUserCoins()" style="border-color: rgba(255,68,68,0.3); background: rgba(255,68,68,0.05); justify-content: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                <span style="color: #ff4444;">Reset Coins to 0</span>
             </div>
         </div>
     </div>
@@ -1785,10 +1739,19 @@
             document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('selected-theme'));
             let selectedEl = document.getElementById('theme-' + themeName);
             if (selectedEl) selectedEl.classList.add('selected-theme');
+            
+            // Re-draw wheel so the border updates if we are on the spin screen
+            if (!document.getElementById('spin-screen').classList.contains('hidden')) {
+                window.drawWheel();
+            }
         };
 
         window.loadSavedTheme = function() {
             let savedTheme = localStorage.getItem('app_theme') || 'default';
+            if (savedTheme === 'light') {
+                savedTheme = 'default';
+                localStorage.setItem('app_theme', 'default');
+            }
             document.body.setAttribute('data-theme', savedTheme);
             setTimeout(() => {
                 let selectedEl = document.getElementById('theme-' + savedTheme);
@@ -2033,6 +1996,22 @@
             else if (window.currentAdTarget === 'ads_screen') { window.creditCoinsDirectly(200, 'ads_screen'); }
         };
 
+        // NEW RESET COINS LOGIC
+        window.resetUserCoins = async function() {
+            if (confirm("Are you sure you want to reset your coins to 0? This action cannot be undone.")) {
+                try {
+                    window.currentCoins = 0;
+                    window.updateCoinsDisplay();
+                    const userDocRef = doc(db, "users", window.activeTelegramId.toString());
+                    await updateDoc(userDocRef, { coins: 0 });
+                    alert("Your coins have been reset to 0.");
+                } catch (e) {
+                    alert("Error resetting coins. Please try again.");
+                    console.error(e);
+                }
+            }
+        };
+
         window.openProfileSlide = function() { document.getElementById('profile-slide-screen').classList.add('active-slide'); };
         window.closeProfileSlide = function() { document.getElementById('profile-slide-screen').classList.remove('active-slide'); };
         
@@ -2211,7 +2190,7 @@
                 ctx.lineTo(c, c); 
                 ctx.fill();
                 
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.5;
                 ctx.strokeStyle = 'rgba(0,0,0,0.15)';
                 ctx.stroke();
                 
