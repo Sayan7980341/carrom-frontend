@@ -1320,7 +1320,60 @@
         </div>
         <div class="button-container">
             <button class="game-btn" onclick="showScreen('spin-screen')">
-                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 14 L26 14 A10 10 0 0 1 23.07 21.07 Z" fill="#ff3366"/><path d="M16 14 L23.07 21.07 A10 10 0 0 1 16 24 Z" fill="#00d4ff"/><path d="M16 14 L16 24 A10 10 0 0 1 8.93 21.07 Z" fill="#ffcc00"/><path d="M16 14 L8.93 21.07 Z" fill="#2bff6e"/><path d="M16 14 L6 14 A10 10 0 0 1 8.93 6.93 Z" fill="#9c27b0"/><path d="M16 14 L8.93 6.93 A10 10 0 0 1 16 4 Z" fill="#e91e63"/><path d="M16 14 L16 4 A10 10 0 0 1 23.07 6.93 Z" fill="#ff9800"/><path d="M16 14 L23.07 6.93 A10 10 0 0 1 26 14 Z" fill="#3f51b5"/><circle cx="16" cy="14" r="5" fill="#ffffff" stroke="#10112e" stroke-width="0.8"/><text x="16" y="15.2" font-size="2.6" font-weight="900" fill="#10112e" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" letter-spacing="-0.1px">SPIN</text><path d="M13 24 L10 29 M19 24 L22 29 M7 29 L25 29" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/></svg>Daily Spin</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="btn-left-layout">
+                    <svg class="btn-svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                      <defs>
+                        <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+                          <stop offset="0%" stop-color="#2B1D68"/>
+                          <stop offset="100%" stop-color="#12142F"/>
+                        </radialGradient>
+
+                        <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FFD86A"/>
+                          <stop offset="100%" stop-color="#D89000"/>
+                        </linearGradient>
+
+                        <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".45"/>
+                        </filter>
+                      </defs>
+
+                      <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+                      <circle cx="64" cy="64" r="42" fill="none" stroke="#8F45FF" stroke-width="3" opacity=".7"/>
+
+                      <g filter="url(#shadow)">
+                        <circle cx="64" cy="64" r="34" fill="#2A2A2A" stroke="url(#gold)" stroke-width="5"/>
+
+                        <path d="M64 64 L64 30 A34 34 0 0 1 88 40 Z" fill="#FF4D8D"/>
+                        <path d="M64 64 L88 40 A34 34 0 0 1 98 64 Z" fill="#FFD43B"/>
+                        <path d="M64 64 L98 64 A34 34 0 0 1 88 88 Z" fill="#55E35A"/>
+                        <path d="M64 64 L88 88 A34 34 0 0 1 64 98 Z" fill="#25C9FF"/>
+                        <path d="M64 64 L64 98 A34 34 0 0 1 40 88 Z" fill="#8B4DFF"/>
+                        <path d="M64 64 L40 88 A34 34 0 0 1 30 64 Z" fill="#FFC533"/>
+                        <path d="M64 64 L30 64 A34 34 0 0 1 40 40 Z" fill="#3A9CFF"/>
+                        <path d="M64 64 L40 40 A34 34 0 0 1 64 30 Z" fill="#6D3DFF"/>
+
+                        <circle cx="64" cy="64" r="10" fill="url(#gold)" stroke="#C57B00" stroke-width="2"/>
+
+                        <path fill="#FFF7B0" d="M64 56l2.3 4.8 5.3.8-3.8 3.7.9 5.2-4.7-2.5-4.7 2.5.9-5.2-3.8-3.7 5.3-.8z"/>
+                      </g>
+
+                      <path d="M64 10 L58 22 H70 Z" fill="url(#gold)" stroke="#A96D00" stroke-width="1.5"/>
+
+                      <g fill="#FFE27A">
+                        <circle cx="64" cy="26" r="2"/>
+                        <circle cx="90" cy="38" r="2"/>
+                        <circle cx="102" cy="64" r="2"/>
+                        <circle cx="90" cy="90" r="2"/>
+                        <circle cx="64" cy="102" r="2"/>
+                        <circle cx="38" cy="90" r="2"/>
+                        <circle cx="26" cy="64" r="2"/>
+                        <circle cx="38" cy="38" r="2"/>
+                      </g>
+                    </svg>Daily Spin
+                </div>
+                <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('scratch-screen')">
                 <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="6" width="16" height="16" rx="2" fill="#ffeb3b" stroke="#fbc02d" stroke-width="1.5"/><path d="M16 10h8M16 14h5" stroke="#f57f17" stroke-width="1" stroke-linecap="round" opacity="0.4"/><rect x="4" y="10" width="16" height="16" rx="2" fill="#f44336" stroke="#d32f2f" stroke-width="1.5"/><circle cx="12" cy="18" r="2.5" fill="#ffffff" opacity="0.3"/><path d="M8 14h8M8 22h5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/></svg>Scratch Card</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
