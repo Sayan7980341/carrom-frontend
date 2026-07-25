@@ -1376,7 +1376,43 @@
                 <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('scratch-screen')">
-                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="6" width="16" height="16" rx="2" fill="#ffeb3b" stroke="#fbc02d" stroke-width="1.5"/><path d="M16 10h8M16 14h5" stroke="#f57f17" stroke-width="1" stroke-linecap="round" opacity="0.4"/><rect x="4" y="10" width="16" height="16" rx="2" fill="#f44336" stroke="#d32f2f" stroke-width="1.5"/><circle cx="12" cy="18" r="2.5" fill="#ffffff" opacity="0.3"/><path d="M8 14h8M8 22h5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/></svg>Scratch Card</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="btn-left-layout">
+                    <svg class="btn-svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                      <defs>
+                        <linearGradient id="scratch_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#1B1448"/>
+                          <stop offset="100%" stop-color="#10152F"/>
+                        </linearGradient>
+
+                        <linearGradient id="scratch_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FFD95E"/>
+                          <stop offset="100%" stop-color="#E39B00"/>
+                        </linearGradient>
+
+                        <linearGradient id="scratch_redCard" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FF4D6D"/>
+                          <stop offset="100%" stop-color="#D62839"/>
+                        </linearGradient>
+
+                        <filter id="scratch_shadow">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".4"/>
+                        </filter>
+                      </defs>
+
+                      <rect width="128" height="128" rx="28" fill="url(#scratch_bg)"/>
+
+                      <circle cx="64" cy="64" r="42" fill="none" stroke="#8F45FF" stroke-width="3" opacity=".6"/>
+
+                      <rect x="50" y="34" width="38" height="52" rx="8" fill="url(#scratch_gold)" filter="url(#scratch_shadow)"/>
+
+                      <rect x="36" y="42" width="38" height="52" rx="8" fill="url(#scratch_redCard)" filter="url(#scratch_shadow)"/>
+
+                      <circle cx="55" cy="68" r="10" fill="url(#scratch_gold)" stroke="#C77A00" stroke-width="2"/>
+
+                      <path d="M55 61l2 4 4 .6-3 3 .7 4-3.7-2-3.7 2 .7-4-3-3 4-.6z" fill="#FFF6A8"/>
+                    </svg>Scratch Card
+                </div>
+                <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('ttt-screen')">
                 <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="30" height="30" rx="6" fill="#090a21" stroke="#b500ff" stroke-width="1.5" /><path d="M11 1v30M21 1v30M1 11h30M1 21h30" stroke="#3c1466" stroke-width="1"/><path d="M4 4l5 5M9 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="6.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 4l5 5M28 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><path d="M4 13.5l5 5M9 13.5l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="16" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="6.5" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="16" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 23l5 5M28 23l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/></svg>Tic-tac-toe</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
