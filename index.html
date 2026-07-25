@@ -251,8 +251,8 @@
         }
 
         .btn-svg-icon { 
-            width: 32px; 
-            height: 32px; 
+            width: 42px; 
+            height: 42px; 
             flex-shrink: 0; 
             display: block; 
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4)); 
@@ -1415,7 +1415,76 @@
                 <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('ttt-screen')">
-                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="30" height="30" rx="6" fill="#090a21" stroke="#b500ff" stroke-width="1.5" /><path d="M11 1v30M21 1v30M1 11h30M1 21h30" stroke="#3c1466" stroke-width="1"/><path d="M4 4l5 5M9 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="6.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 4l5 5M28 4l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><path d="M4 13.5l5 5M9 13.5l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="16" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="6.5" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><circle cx="16" cy="25.5" r="2.5" stroke="#ff3366" stroke-width="1.5"/><path d="M23 23l5 5M28 23l-5 5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/></svg>Tic-tac-toe</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="btn-left-layout">
+                    <svg class="btn-svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                      <defs>
+                        <linearGradient id="ttt_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#1B1448"/>
+                          <stop offset="100%" stop-color="#10152F"/>
+                        </linearGradient>
+
+                        <linearGradient id="ttt_grid" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#A56EFF"/>
+                          <stop offset="100%" stop-color="#6A35FF"/>
+                        </linearGradient>
+
+                        <linearGradient id="ttt_xColor" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FF5F6D"/>
+                          <stop offset="100%" stop-color="#FF2E55"/>
+                        </linearGradient>
+
+                        <linearGradient id="ttt_oColor" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FFD95E"/>
+                          <stop offset="100%" stop-color="#FFB300"/>
+                        </linearGradient>
+
+                        <filter id="ttt_shadow">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".45"/>
+                        </filter>
+                      </defs>
+
+                      <rect width="128" height="128" rx="28" fill="url(#ttt_bg)"/>
+                      <circle cx="64" cy="64" r="42" fill="none" stroke="#8F45FF" stroke-width="3" opacity=".6"/>
+
+                      <g filter="url(#ttt_shadow)">
+                        <rect x="32" y="32" width="64" height="64" rx="10" fill="none" stroke="url(#ttt_grid)" stroke-width="4"/>
+                        <line x1="53" y1="32" x2="53" y2="96" stroke="url(#ttt_grid)" stroke-width="4"/>
+                        <line x1="75" y1="32" x2="75" y2="96" stroke="url(#ttt_grid)" stroke-width="4"/>
+                        <line x1="32" y1="53" x2="96" y2="53" stroke="url(#ttt_grid)" stroke-width="4"/>
+                        <line x1="32" y1="75" x2="96" y2="75" stroke="url(#ttt_grid)" stroke-width="4"/>
+                      </g>
+
+                      <g stroke="url(#ttt_xColor)" stroke-width="5" stroke-linecap="round">
+                        <line x1="39" y1="39" x2="47" y2="47"/>
+                        <line x1="47" y1="39" x2="39" y2="47"/>
+                      </g>
+                      <circle cx="64" cy="43" r="6" fill="none" stroke="url(#ttt_oColor)" stroke-width="4"/>
+
+                      <g stroke="url(#ttt_xColor)" stroke-width="5" stroke-linecap="round">
+                        <line x1="81" y1="39" x2="89" y2="47"/>
+                        <line x1="89" y1="39" x2="81" y2="47"/>
+                      </g>
+                      <circle cx="43" cy="64" r="6" fill="none" stroke="url(#ttt_oColor)" stroke-width="4"/>
+
+                      <g stroke="url(#ttt_xColor)" stroke-width="5" stroke-linecap="round">
+                        <line x1="60" y1="60" x2="68" y2="68"/>
+                        <line x1="68" y1="60" x2="60" y2="68"/>
+                      </g>
+                      <circle cx="86" cy="64" r="6" fill="none" stroke="url(#ttt_oColor)" stroke-width="4"/>
+
+                      <g stroke="url(#ttt_xColor)" stroke-width="5" stroke-linecap="round">
+                        <line x1="39" y1="81" x2="47" y2="89"/>
+                        <line x1="47" y1="81" x2="39" y2="89"/>
+                      </g>
+                      <circle cx="64" cy="86" r="6" fill="none" stroke="url(#ttt_oColor)" stroke-width="4"/>
+
+                      <g stroke="url(#ttt_xColor)" stroke-width="5" stroke-linecap="round">
+                        <line x1="81" y1="81" x2="89" y2="89"/>
+                        <line x1="89" y1="81" x2="81" y2="89"/>
+                      </g>
+                    </svg>Tic-tac-toe
+                </div>
+                <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('ads-screen')">
                 <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="28" height="20" rx="6" fill="#090a21" stroke="#00d4ff" stroke-width="1.5"/><path d="M13 11l7 5-7 5V11z" fill="#00d4ff"/><circle cx="7" cy="10" r="1.5" fill="#ff3366"/><circle cx="25" cy="22" r="1.5" fill="#2bff6e"/></svg>Ads to earn money</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
