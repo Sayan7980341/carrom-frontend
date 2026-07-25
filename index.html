@@ -1487,7 +1487,47 @@
                 <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('ads-screen')">
-                <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="28" height="20" rx="6" fill="#090a21" stroke="#00d4ff" stroke-width="1.5"/><path d="M13 11l7 5-7 5V11z" fill="#00d4ff"/><circle cx="7" cy="10" r="1.5" fill="#ff3366"/><circle cx="25" cy="22" r="1.5" fill="#2bff6e"/></svg>Ads to earn money</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="btn-left-layout">
+                    <svg class="btn-svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                      <defs>
+                        <linearGradient id="ads_screen" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#8A4DFF"/>
+                          <stop offset="100%" stop-color="#5A1EFF"/>
+                        </linearGradient>
+
+                        <linearGradient id="ads_coin" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#FFE57A"/>
+                          <stop offset="100%" stop-color="#F4A300"/>
+                        </linearGradient>
+
+                        <radialGradient id="ads_glow">
+                          <stop offset="0%" stop-color="#B57BFF" stop-opacity=".7"/>
+                          <stop offset="100%" stop-color="#B57BFF" stop-opacity="0"/>
+                        </radialGradient>
+
+                        <filter id="ads_shadow">
+                          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity=".35"/>
+                        </filter>
+                      </defs>
+
+                      <circle cx="64" cy="64" r="52" fill="url(#ads_glow)"/>
+
+                      <g filter="url(#ads_shadow)">
+                        <rect x="20" y="26" width="88" height="60" rx="16" fill="url(#ads_screen)"/>
+                        <circle cx="64" cy="56" r="18" fill="#ffffff22"/>
+                        <polygon points="58,45 58,67 76,56" fill="white"/>
+                      </g>
+
+                      <g filter="url(#ads_shadow)">
+                        <circle cx="92" cy="90" r="18" fill="url(#ads_coin)" stroke="#C47A00" stroke-width="2"/>
+                        <text x="92" y="96" text-anchor="middle" font-size="18" font-family="Arial" font-weight="bold" fill="#FFF9C4">★</text>
+                      </g>
+
+                      <path d="M26 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFD54F"/>
+                      <path d="M104 30l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" fill="#FFD54F"/>
+                    </svg>Ads to earn money
+                </div>
+                <svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <button class="game-btn" onclick="showScreen('reward-screen')">
                 <div class="btn-left-layout"><svg class="btn-svg-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rewardGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e91e63" /><stop offset="100%" stop-color="#ff4081" /></linearGradient></defs><rect x="4" y="6" width="24" height="22" rx="4" stroke="url(#rewardGrad)" stroke-width="2.5" fill="rgba(233,30,99,0.05)"/><path d="M4 13h24" stroke="url(#rewardGrad)" stroke-width="2"/><path d="M9 3v5M23 3v5" class="svg-icon-white-stroke" stroke-width="2.5" stroke-linecap="round"/><path d="M10 18h4v4h-4zM18 18h4v4h-4z" class="svg-icon-white-fill" opacity="0.9"/></svg>7 Day Reward</div><svg class="btn-vector-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
