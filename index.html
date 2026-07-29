@@ -297,6 +297,7 @@
             font-size: 20px; 
             font-weight: bold; 
             color: var(--text-white); 
+            margin-bottom: 0px; 
         }
 
         .balance-card { 
@@ -2004,6 +2005,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        // --- ADDED THIS LINE FOR APP CHECK IMPORT ---
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
         import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -2015,6 +2018,14 @@
             appId: "1:987489928421:web:cfd11d96f7228e38da600c"
         };
         const app = initializeApp(firebaseConfig);
+        
+        // --- ADDED THIS BLOCK FOR APP CHECK SETUP ---
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LdzXWstAAAAAI2msGHJpFVi8u54uVqEI4kp1oko'),
+            isTokenAutoRefreshEnabled: true
+        });
+        // ------------------------------------------
+
         const db = getFirestore(app);
 
         window.tg = window.Telegram.WebApp;
