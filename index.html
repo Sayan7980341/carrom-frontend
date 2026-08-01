@@ -51,7 +51,7 @@
             --neon-blue-rgb: 255, 255, 255;
             --neon-purple-rgb: 150, 150, 150;
         }
-        [data-theme="dark"] .coin-header, [data-theme="dark"] .profile-header, [data-theme="dark"] .balance-card, [data-theme="dark"] .scratch-card-box, [data-theme="dark"] .refer-info-card, [data-theme="dark"] .refer-link-container, [data-theme="dark"] .ttt-board-outer, [data-theme="dark"] .preview-showcase-box, [data-theme="dark"] .profile-menu-item, [data-theme="dark"] .profile-icon-placement, [data-theme="dark"] .profile-coin-wrap, [data-theme="dark"] .withdraw-square-box, [data-theme="dark"] .reward-day-card {
+        [data-theme="dark"] .coin-header, [data-theme="dark"] .profile-header, [data-theme="dark"] .balance-card, [data-theme="dark"] .scratch-card-box, [data-theme="dark"] .refer-info-card, [data-theme="dark"] .refer-link-container, [data-theme="dark"] .ttt-board-outer, [data-theme="dark"] .preview-showcase-box, [data-theme="dark"] .profile-menu-item, [data-theme="dark"] .profile-icon-placement, [data-theme="dark"] .profile-coin-wrap, [data-theme="dark"] .withdraw-square-box, [data-theme="dark"] .reward-day-card, [data-theme="dark"] .history-card {
             background: #181818;
             border-color: #333333;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
@@ -1303,6 +1303,77 @@
         .theme-option.selected-theme .theme-circle::after {
             opacity: 1;
         }
+
+        /* ==========================================
+           16. WITHDRAWAL HISTORY & CHAT SCREEN
+           ========================================== */
+        .icon-history { 
+            stroke: #ff9800; 
+            filter: drop-shadow(0 0 5px rgba(255,152,0,0.7)); 
+        }
+
+        .history-card {
+            background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%);
+            border: 1px solid rgba(var(--neon-blue-rgb),0.15);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        .history-date { 
+            position: absolute; 
+            top: 16px; 
+            right: 16px; 
+            font-size: 11px; 
+            color: var(--text-gray); 
+            font-weight: bold; 
+            text-align: right; 
+        }
+
+        .history-title { 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: var(--text-white); 
+            margin-bottom: 12px; 
+            padding-right: 80px; 
+        }
+
+        .history-row { 
+            font-size: 14px; 
+            color: var(--text-gray); 
+            margin-bottom: 6px; 
+        }
+
+        .history-row span { 
+            color: var(--text-white); 
+            font-weight: bold; 
+        }
+
+        .history-status-pending { color: #ff9800 !important; }
+        .history-status-completed { color: #2bff6e !important; }
+        .history-status-rejected { color: #ff4444 !important; }
+
+        .enter-chat-btn {
+            background: rgba(var(--neon-blue-rgb), 0.1);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .enter-chat-btn:active { 
+            transform: scale(0.97); 
+            background: rgba(var(--neon-blue-rgb), 0.2); 
+        }
     </style>
 </head>
 <body>
@@ -1931,6 +2002,28 @@
         </div>
     </div>
 
+    <!-- NEW WITHDRAWAL HISTORY SCREEN -->
+    <div id="history-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('main-screen')">←</button>
+            <div class="spin-title">Withdrawal History</div>
+        </div>
+        <div id="history-list-container" style="padding: 0 10px; width: 100%; max-width: 340px; margin: 0 auto; padding-bottom: 20px;">
+            <!-- History Cards will be injected here by JS -->
+        </div>
+    </div>
+
+    <!-- NEW BLANK CHAT SCREEN (PLACEHOLDER) -->
+    <div id="chat-screen" class="hidden">
+        <div class="spin-header-bar">
+            <button class="back-btn" onclick="showScreen('history-screen')">←</button>
+            <div class="spin-title">Support Chat</div>
+        </div>
+        <div style="padding: 20px; text-align: center; color: var(--text-gray);">
+            <!-- Blank screen as requested, you can add ChatGPT generated code here later -->
+        </div>
+    </div>
+
     <div id="edit-profile-screen" class="hidden">
         <div class="spin-header-bar">
             <button class="back-btn" onclick="showScreen('main-screen')">←</button>
@@ -1993,6 +2086,16 @@
                 </div>
                 <div class="menu-item-arrow">→</div>
             </div>
+            
+            <!-- NEW MENU ITEM FOR WITHDRAWAL HISTORY -->
+            <div class="profile-menu-item" onclick="showScreen('history-screen'); closeProfileSlide();">
+                <div class="menu-item-left">
+                    <svg class="profile-list-icon icon-history" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Withdrawal History</span>
+                </div>
+                <div class="menu-item-arrow">→</div>
+            </div>
+            
             <div class="profile-menu-item" onclick="showScreen('settings-screen'); closeProfileSlide();">
                 <div class="menu-item-left">
                     <svg class="profile-list-icon icon-settings" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -2007,7 +2110,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         // --- ADDED THIS LINE FOR APP CHECK IMPORT ---
         import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
-        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // IMPORT ADDED FOR GETDOCS, QUERY, WHERE
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBiaYzra-PFiwwObp_POTZdIt9OICT0krw",
@@ -2456,6 +2560,72 @@
             for (let i = 0; i < 9; i++) document.getElementById("ttt" + i).innerText = ""; 
         };
 
+        // LOAD HISTORY FUNCTION
+        window.loadWithdrawalHistory = async function() {
+            const container = document.getElementById('history-list-container');
+            container.innerHTML = '<div style="text-align:center; color:var(--text-gray); margin-top: 20px;">Loading history...</div>';
+            
+            try {
+                const q = query(collection(db, "redeem_requests"), where("telegram_id", "==", window.activeTelegramId));
+                const snapshot = await getDocs(q);
+                
+                let requests = [];
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    requests.push(data);
+                });
+                
+                // Sort array by timestamp descending (newest first)
+                requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                if(requests.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:var(--text-gray); margin-top: 20px;">No withdrawal history found.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                requests.forEach(req => {
+                    let dateObj = new Date(req.timestamp);
+                    let dateStr = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                    let timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    
+                    let statusRaw = req.status || "Pending";
+                    let statusText = "Pending";
+                    let statusClass = "history-status-pending";
+                    
+                    if (statusRaw.toLowerCase() === 'approved' || statusRaw.toLowerCase() === 'completed') {
+                        statusText = "Completed";
+                        statusClass = "history-status-completed";
+                    } else if (statusRaw.toLowerCase() === 'rejected') {
+                        statusText = "Rejected";
+                        statusClass = "history-status-rejected";
+                    }
+                    
+                    let card = document.createElement('div');
+                    card.className = 'history-card';
+                    card.innerHTML = `
+                        <div class="history-date">${dateStr}<br>${timeStr}</div>
+                        <div class="history-title">Your Request ${statusText}</div>
+                        <div class="history-row">Item: <span>${req.item_name}</span></div>
+                        <div class="history-row">Coins: <span>${Number(req.coins_deducted).toLocaleString()}</span></div>
+                        <div class="history-row">Status: <span class="${statusClass}">${statusText}</span></div>
+                        <button class="enter-chat-btn" onclick="openSupportChat('${req.id}')">Enter Chat</button>
+                    `;
+                    container.appendChild(card);
+                });
+                
+            } catch(e) {
+                console.error(e);
+                container.innerHTML = '<div style="text-align:center; color:#ff4444; margin-top: 20px;">Failed to load history. Please try again.</div>';
+            }
+        };
+
+        window.openSupportChat = function(requestId) {
+            window.showScreen('chat-screen');
+        };
+
         window.showScreen = function(screenId) {
             document.querySelectorAll('body > div').forEach(el => { if(el.id !== 'profile-slide-screen') el.classList.add('hidden'); });
             document.getElementById(screenId).classList.remove('hidden');
@@ -2473,6 +2643,7 @@
             else if (screenId === 'reward-screen') { window.renderRewardScreenData(); }
             else if (screenId === 'refer-screen') { window.setupReferralLinkUI(); }
             else if (screenId === 'ttt-screen') { window.resetTTTGame(); }
+            else if (screenId === 'history-screen') { window.loadWithdrawalHistory(); }
         };
 
         window.renderRewardScreenData = function() {
