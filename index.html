@@ -1374,6 +1374,132 @@
             transform: scale(0.97); 
             background: rgba(var(--neon-blue-rgb), 0.2); 
         }
+
+        /* ==========================================
+           17. SUPPORT CHAT UI (NEW)
+           ========================================== */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-main-bottom);
+            z-index: 1000;
+        }
+        .messages-container {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            word-wrap: break-word;
+            text-align: left;
+        }
+        .user-msg {
+            align-self: flex-end;
+            background-color: var(--neon-blue);
+            color: #000;
+            font-weight: bold;
+        }
+        [data-theme="dark"] .user-msg {
+            color: #fff;
+            background-color: #0084ff;
+        }
+        .admin-msg {
+            align-self: flex-start;
+            background-color: #1e1e26;
+            color: #fff;
+            border: 1px solid rgba(165,170,222,0.15);
+        }
+        .chat-input-box {
+            display: flex;
+            padding: 10px;
+            background: var(--btn-grad-top);
+            border-top: 1px solid rgba(var(--neon-blue-rgb), 0.2);
+            gap: 8px;
+            align-items: center;
+        }
+        .chat-input-box input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: rgba(0,0,0,0.3);
+            color: var(--text-white);
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-input-box button.send-btn {
+            padding: 12px 18px;
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        [data-theme="dark"] .chat-input-box button.send-btn {
+            color: #fff;
+            background: #0084ff;
+        }
+        .attach-btn {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-preview-container {
+            display: none;
+            padding: 10px;
+            background: var(--btn-grad-bottom);
+            border-top: 1px solid rgba(var(--neon-blue-rgb), 0.2);
+            position: relative;
+            text-align: left;
+        }
+        .image-preview-container img {
+            max-height: 80px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .clear-preview-btn {
+            position: absolute;
+            top: 5px;
+            left: 75px;
+            background: #ff4444;
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .chat-img-attachment {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -2013,14 +2139,32 @@
         </div>
     </div>
 
-    <!-- NEW BLANK CHAT SCREEN (PLACEHOLDER) -->
+    <!-- FULL SUPPORT CHAT SCREEN (POINT 4 + IMAGE + POINT 5) -->
     <div id="chat-screen" class="hidden">
-        <div class="spin-header-bar">
-            <button class="back-btn" onclick="showScreen('history-screen')">←</button>
-            <div class="spin-title">Support Chat</div>
-        </div>
-        <div style="padding: 20px; text-align: center; color: var(--text-gray);">
-            <!-- Blank screen as requested, you can add ChatGPT generated code here later -->
+        <div class="chat-container">
+            <div class="spin-header-bar" style="padding: 15px 20px 10px 20px; margin-bottom: 0; background: var(--btn-grad-top); border-bottom: 1px solid rgba(165,170,222,0.1);">
+                <button class="back-btn" onclick="showScreen('history-screen')" style="left: 15px;">←</button>
+                <div class="spin-title">Support Chat</div>
+            </div>
+
+            <!-- Messages List -->
+            <div id="messages-container" class="messages-container">
+                <p style="text-align:center; color:var(--text-gray); margin-top:20px;">Loading messages...</p>
+            </div>
+
+            <!-- Image Preview Area -->
+            <div id="image-preview-container" class="image-preview-container">
+                <img id="preview-img" src="">
+                <button class="clear-preview-btn" onclick="clearPreview()">X</button>
+            </div>
+
+            <!-- Input Box -->
+            <div class="chat-input-box">
+                <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="previewImage()">
+                <button class="attach-btn" onclick="document.getElementById('image-input').click()">📁</button>
+                <input type="text" id="chat-input" placeholder="Type your message..." />
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
         </div>
     </div>
 
@@ -2108,10 +2252,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        // --- ADDED THIS LINE FOR APP CHECK IMPORT ---
         import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
-        // IMPORT ADDED FOR GETDOCS, QUERY, WHERE
-        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // --- ADDED serverTimestamp and orderBy TO IMPORTS ---
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot, getDocs, query, where, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBiaYzra-PFiwwObp_POTZdIt9OICT0krw",
@@ -2123,12 +2266,10 @@
         };
         const app = initializeApp(firebaseConfig);
         
-        // --- ADDED THIS BLOCK FOR APP CHECK SETUP ---
         const appCheck = initializeAppCheck(app, {
             provider: new ReCaptchaV3Provider('6LdzXWstAAAAAI2msGHJpFVi8u54uVqEI4kp1oko'),
             isTokenAutoRefreshEnabled: true
         });
-        // ------------------------------------------
 
         const db = getFirestore(app);
 
@@ -2165,21 +2306,23 @@
         window.sliderCurrentX = 0; 
         window.selectedItemRawCost = 0;
         
+        // CHAT GLOBALS
+        window.activeRequestId = null;
+        window.selectedImageData = null;
+        let chatUnsubscribe = null;
+        
         window.rewards = [650, 800, 900, 450, 1000, 100, 250, 500, 300, 350, 400]; 
         window.colors = ['#009688', '#c0ca33', '#f06292', '#795548', '#8e24aa', '#ff5722', '#ffb300', '#4caf50', '#03a9f4', '#7e57c2', '#e91e63']; 
         
         window.staticDailyValues = [100, 300, 400, 500, 600, 700, 1000];
         window.AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "39015" }) : null;
 
-        // THEME LOGIC INITIALIZATION
         window.setTheme = function(themeName) {
             localStorage.setItem('app_theme', themeName);
             document.body.setAttribute('data-theme', themeName);
             document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('selected-theme'));
             let selectedEl = document.getElementById('theme-' + themeName);
             if (selectedEl) selectedEl.classList.add('selected-theme');
-            
-            // Re-draw wheel so the border updates if we are on the spin screen
             if (!document.getElementById('spin-screen').classList.contains('hidden')) {
                 window.drawWheel();
             }
@@ -2435,7 +2578,6 @@
             else if (window.currentAdTarget === 'ads_screen') { window.creditCoinsDirectly(200, 'ads_screen'); }
         };
 
-        // NEW RESET COINS LOGIC
         window.resetUserCoins = async function() {
             if (confirm("Warning ⚠️\n\nAre you sure you want to Reset your Coins? This action cannot be undone.")) {
                 try {
@@ -2560,7 +2702,6 @@
             for (let i = 0; i < 9; i++) document.getElementById("ttt" + i).innerText = ""; 
         };
 
-        // LOAD HISTORY FUNCTION
         window.loadWithdrawalHistory = async function() {
             const container = document.getElementById('history-list-container');
             container.innerHTML = '<div style="text-align:center; color:var(--text-gray); margin-top: 20px;">Loading history...</div>';
@@ -2576,7 +2717,6 @@
                     requests.push(data);
                 });
                 
-                // Sort array by timestamp descending (newest first)
                 requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
                 if(requests.length === 0) {
@@ -2622,9 +2762,123 @@
             }
         };
 
+        // ==========================================
+        // NEW SUPPORT CHAT LOGIC (POINT 4 & 5)
+        // ==========================================
         window.openSupportChat = function(requestId) {
+            window.activeRequestId = requestId.toString();
             window.showScreen('chat-screen');
+            window.loadChatMessages();
         };
+
+        window.loadChatMessages = function() {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin-top:20px;">Loading chat...</p>';
+
+            if (chatUnsubscribe) chatUnsubscribe(); // Stop old listener
+
+            // Path targeting specific request ID
+            const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId, "messages");
+            const q = query(chatRef, orderBy("timestamp", "asc"));
+
+            chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = "";
+
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin-top:20px;">No messages yet. Send a message to support!</p>';
+                    return;
+                }
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const isUser = (data.sender === "user");
+
+                    const msgDiv = document.createElement("div");
+                    msgDiv.className = isUser ? "msg user-msg" : "msg admin-msg";
+
+                    if (data.text) {
+                        const p = document.createElement("div");
+                        p.innerText = data.text;
+                        msgDiv.appendChild(p);
+                    }
+
+                    if (data.image) {
+                        const img = document.createElement("img");
+                        img.src = data.image;
+                        img.className = "chat-img-attachment";
+                        msgDiv.appendChild(img);
+                    }
+
+                    container.appendChild(msgDiv);
+                });
+
+                // Auto Scroll to Bottom on new message
+                container.scrollTop = container.scrollHeight;
+            }, (error) => {
+                console.error("Chat fetch error:", error);
+                container.innerHTML = '<p style="color:#ff4444; text-align:center;">Failed to load chat.</p>';
+            });
+        };
+
+        window.previewImage = function() {
+            const file = document.getElementById('image-input').files[0];
+            if (file) {
+                if (file.size > 1024 * 1024 * 2) { 
+                    alert("Image is too large! Please select an image under 2MB.");
+                    window.clearPreview();
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    window.selectedImageData = e.target.result;
+                    document.getElementById('preview-img').src = window.selectedImageData;
+                    document.getElementById('image-preview-container').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.clearPreview = function() {
+            window.selectedImageData = null;
+            document.getElementById('image-preview-container').style.display = 'none';
+            document.getElementById('image-input').value = "";
+        };
+
+        window.sendMessage = async function() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+
+            if (!text && !window.selectedImageData) return; // Ignore if empty
+
+            input.value = "";
+            const imageDataToSave = window.selectedImageData;
+            window.clearPreview();
+
+            try {
+                const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId, "messages");
+                await addDoc(chatRef, {
+                    text: text,
+                    image: imageDataToSave,
+                    sender: "user",
+                    timestamp: serverTimestamp()
+                });
+            } catch (err) {
+                console.error("Send Error:", err);
+                alert("Message send failed. Please try again!");
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.addEventListener("keypress", function (e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        window.sendMessage();
+                    }
+                });
+            }
+        });
 
         window.showScreen = function(screenId) {
             document.querySelectorAll('body > div').forEach(el => { if(el.id !== 'profile-slide-screen') el.classList.add('hidden'); });
