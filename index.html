@@ -2139,7 +2139,7 @@
         </div>
     </div>
 
-    <!-- FULL SUPPORT CHAT SCREEN (POINT 4 + IMAGE + POINT 5) -->
+    <!-- FULL SUPPORT CHAT SCREEN (POINT 4 + IMAGE + ADMIN PANEL SYNC) -->
     <div id="chat-screen" class="hidden">
         <div class="chat-container">
             <div class="spin-header-bar" style="padding: 15px 20px 10px 20px; margin-bottom: 0; background: var(--btn-grad-top); border-bottom: 1px solid rgba(165,170,222,0.1);">
@@ -2242,7 +2242,7 @@
             
             <div class="profile-menu-item" onclick="showScreen('settings-screen'); closeProfileSlide();">
                 <div class="menu-item-left">
-                    <svg class="profile-list-icon icon-settings" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="profile-list-icon icon-settings" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                     <span>Settings</span>
                 </div>
                 <div class="menu-item-arrow">→</div>
@@ -2763,7 +2763,7 @@
         };
 
         // ==========================================
-        // NEW SUPPORT CHAT LOGIC (POINT 4 & 5)
+        // FIXED SUPPORT CHAT LOGIC (ADMIN PANEL COMPATIBLE)
         // ==========================================
         window.openSupportChat = function(requestId) {
             window.activeRequestId = requestId.toString();
@@ -2777,8 +2777,8 @@
 
             if (chatUnsubscribe) chatUnsubscribe(); // Stop old listener
 
-            // Path targeting specific request ID
-            const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId, "messages");
+            // Directly read from chats/{userId}/messages (matching Admin Panel)
+            const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "messages");
             const q = query(chatRef, orderBy("timestamp", "asc"));
 
             chatUnsubscribe = onSnapshot(q, (snapshot) => {
@@ -2855,7 +2855,8 @@
             window.clearPreview();
 
             try {
-                const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId, "messages");
+                // Directly send to chats/{userId}/messages (matching Admin Panel)
+                const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "messages");
                 await addDoc(chatRef, {
                     text: text,
                     image: imageDataToSave,
