@@ -2099,7 +2099,6 @@
         </div>
     </div>
 
-    <!-- NEW THEME SETTINGS SCREEN -->
     <div id="settings-screen" class="hidden">
         <div class="spin-header-bar">
             <button class="back-btn" onclick="showScreen('main-screen')">←</button>
@@ -2128,18 +2127,15 @@
         </div>
     </div>
 
-    <!-- NEW WITHDRAWAL HISTORY SCREEN -->
     <div id="history-screen" class="hidden">
         <div class="spin-header-bar">
             <button class="back-btn" onclick="showScreen('main-screen')">←</button>
             <div class="spin-title">Withdrawal History</div>
         </div>
         <div id="history-list-container" style="padding: 0 10px; width: 100%; max-width: 340px; margin: 0 auto; padding-bottom: 20px;">
-            <!-- History Cards will be injected here by JS -->
-        </div>
+            </div>
     </div>
 
-    <!-- FULL SUPPORT CHAT SCREEN (POINT 4 + IMAGE + ADMIN PANEL SYNC) -->
     <div id="chat-screen" class="hidden">
         <div class="chat-container">
             <div class="spin-header-bar" style="padding: 15px 20px 10px 20px; margin-bottom: 0; background: var(--btn-grad-top); border-bottom: 1px solid rgba(165,170,222,0.1);">
@@ -2147,18 +2143,15 @@
                 <div class="spin-title">Support Chat</div>
             </div>
 
-            <!-- Messages List -->
             <div id="messages-container" class="messages-container">
                 <p style="text-align:center; color:var(--text-gray); margin-top:20px;">Loading messages...</p>
             </div>
 
-            <!-- Image Preview Area -->
             <div id="image-preview-container" class="image-preview-container">
                 <img id="preview-img" src="">
                 <button class="clear-preview-btn" onclick="clearPreview()">X</button>
             </div>
 
-            <!-- Input Box -->
             <div class="chat-input-box">
                 <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="previewImage()">
                 <button class="attach-btn" onclick="document.getElementById('image-input').click()">📁</button>
@@ -2231,7 +2224,6 @@
                 <div class="menu-item-arrow">→</div>
             </div>
             
-            <!-- NEW MENU ITEM FOR WITHDRAWAL HISTORY -->
             <div class="profile-menu-item" onclick="showScreen('history-screen'); closeProfileSlide();">
                 <div class="menu-item-left">
                     <svg class="profile-list-icon icon-history" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2775,13 +2767,13 @@
             const container = document.getElementById('messages-container');
             container.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin-top:20px;">Loading chat...</p>';
 
-            if (chatUnsubscribe) chatUnsubscribe(); // Stop old listener
+            if (chatUnsubscribe) chatUnsubscribe(); 
 
-            // Directly read from chats/{userId}/messages (matching Admin Panel)
             const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "messages");
             const q = query(chatRef, orderBy("timestamp", "asc"));
 
             chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                container.style.gap = "0px"; 
                 container.innerHTML = "";
 
                 if (snapshot.empty) {
@@ -2789,12 +2781,21 @@
                     return;
                 }
 
+                let lastSender = null; 
+
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     const isUser = (data.sender === "user");
 
                     const msgDiv = document.createElement("div");
                     msgDiv.className = isUser ? "msg user-msg" : "msg admin-msg";
+
+                    if (lastSender === data.sender) {
+                        msgDiv.style.marginTop = "2px";
+                    } else {
+                        msgDiv.style.marginTop = lastSender === null ? "0px" : "14px";
+                    }
+                    lastSender = data.sender; 
 
                     if (data.text) {
                         const p = document.createElement("div");
@@ -2812,7 +2813,6 @@
                     container.appendChild(msgDiv);
                 });
 
-                // Auto Scroll to Bottom on new message
                 container.scrollTop = container.scrollHeight;
             }, (error) => {
                 console.error("Chat fetch error:", error);
