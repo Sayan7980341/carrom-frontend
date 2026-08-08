@@ -8,9 +8,6 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* ==========================================
-           0. ROOT VARIABLES (THEME ENGINE)
-           ========================================== */
         :root {
             --neon-blue-rgb: 0, 212, 255;
             --neon-purple-rgb: 181, 0, 255;
@@ -32,13 +29,9 @@
             --btn-active-bottom: #0f1028;
         }
 
-        /* Helper Classes for Dynamic SVG Icons */
         .svg-icon-white-stroke { stroke: #ffffff; }
         .svg-icon-white-fill { fill: #ffffff; }
 
-        /* ------------------------------------------
-           DARK THEME OVERRIDES
-           ------------------------------------------ */
         [data-theme="dark"] {
             --bg-main-top: #121212;
             --bg-main-bottom: #000000;
@@ -85,9 +78,6 @@
             background: #222222;
         }
 
-        /* ==========================================
-           1. CORE APPLICATION BASE LAYOUT
-           ========================================== */
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -117,9 +107,6 @@
             display: none !important; 
         }
 
-        /* ==========================================
-           2. COIN ARTWORK AND BADGE COMPONENT SYSTEM
-           ========================================== */
         .app-coin { 
             display: inline-flex; 
             align-items: center; 
@@ -155,9 +142,6 @@
             margin-top: -2px; 
         }
 
-        /* ==========================================
-           3. LOBBY HEADER NAV ELEMENT PANELS
-           ========================================== */
         .coin-header { 
             position: absolute; 
             top: 15px; 
@@ -198,9 +182,6 @@
             padding: 0 5px; 
         }
 
-        /* ==========================================
-           4. LOBBY NAVIGATION GAME ENTRY INTERFACE
-           ========================================== */
         .game-btn { 
             background: linear-gradient(135deg, var(--btn-grad-top) 0%, var(--btn-grad-bottom) 100%); 
             color: var(--text-white); 
@@ -258,9 +239,6 @@
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4)); 
         }
 
-        /* ==========================================
-           5. SHARED HEADERS SYSTEMS ACROSS ALL SCREENS
-           ========================================== */
         .spin-header-bar { 
             display: flex; 
             align-items: center; 
@@ -326,9 +304,6 @@
             letter-spacing: 0.5px; 
         }
 
-        /* ==========================================
-           6. DAILY SPIN CANVAS WHEEL STRUCTURE
-           ========================================== */
         .wheel-wrapper { 
             position: relative; 
             width: 100%; 
@@ -395,9 +370,6 @@
             color: var(--text-gray); 
         }
 
-        /* ==========================================
-           7. SCRATCH CONTAINER VIEW & BUTTONS
-           ========================================== */
         .scratch-card-box { 
             position: relative; 
             width: 100%; 
@@ -550,9 +522,6 @@
             z-index: 1; 
         }
 
-        /* ==========================================
-           8. STREAKS DAILY REWARDS & CLAIM BUTTONS
-           ========================================== */
         .claim-reward-main-btn { 
             position: relative; 
             z-index: 50;
@@ -667,9 +636,6 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
         }
 
-        /* ==========================================
-           9. REFER AND EARN LAYOUT DESCRIPTION CARDS
-           ========================================== */
         .refer-info-card { 
             background: linear-gradient(135deg, var(--btn-active-top) 0%, #0e102e 100%); 
             border-radius: 20px; 
@@ -746,9 +712,6 @@
             -webkit-user-select: text !important; 
         }
 
-        /* ==========================================
-           10. TIC TAC TOE GRAPHICS GRID MECHANICALS
-           ========================================== */
         .ttt-board-outer { 
             width: 100%; 
             max-width: 300px; 
@@ -806,9 +769,6 @@
             letter-spacing: 0.5px; 
         }
 
-        /* ==========================================
-           11. WITHDRAW CONFIGURED DARK SQUARE BOX MATRIX
-           ========================================== */
         .withdraw-matrix-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
@@ -861,9 +821,6 @@
             font-weight: bold; 
         }
 
-        /* ==========================================
-           12. PREMIUM COMPONENT DETAILED PACK DISPLAY
-           ========================================== */
         .preview-showcase-box { 
             background: linear-gradient(135deg, var(--btn-grad-top) 0%, #0c0d25 100%); 
             border: 1.5px solid rgba(var(--neon-blue-rgb),0.25); 
@@ -917,9 +874,6 @@
             box-shadow: 0 0 12px rgba(var(--neon-blue-rgb),0.25), inset 0 2px 4px rgba(0,0,0,0.4) !important; 
         }
 
-        /* ==========================================
-           13. DYNAMIC INTERACTIVE SLIDER WITH PROGRESS FILL
-           ========================================== */
         .slide-to-redeem-track { 
             position: relative; 
             width: 100%; 
@@ -985,9 +939,6 @@
             pointer-events: none; 
         }
 
-        /* ==========================================
-           14. SLIDE OVERLAY PANEL MENU SYSTEM
-           ========================================== */
         .profile-slide-overlay { 
             position: fixed; 
             top: 0; 
@@ -1169,9 +1120,6 @@
             filter: drop-shadow(0 0 5px rgba(var(--gold-rgb),0.7)); 
         }
 
-        /* ==========================================
-           15. EDIT DATA LAYOUT & SETTINGS INTERFACE
-           ========================================== */
         .edit-profile-form { 
             width: 100%; 
             max-width: 340px; 
@@ -1234,7 +1182,6 @@
             text-shadow: 0 0 8px rgba(var(--neon-blue-rgb),0.4); 
         }
 
-        /* NEW SETTINGS UI STYLES */
         .settings-container {
             width: 100%;
             max-width: 340px;
@@ -1304,9 +1251,6 @@
             opacity: 1;
         }
 
-        /* ==========================================
-           16. WITHDRAWAL HISTORY & CHAT SCREEN
-           ========================================== */
         .icon-history { 
             stroke: #ff9800; 
             filter: drop-shadow(0 0 5px rgba(255,152,0,0.7)); 
@@ -1375,9 +1319,6 @@
             background: rgba(var(--neon-blue-rgb), 0.2); 
         }
 
-        /* ==========================================
-           17. SUPPORT CHAT UI (NEW)
-           ========================================== */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -1420,6 +1361,37 @@
             background-color: #1e1e26;
             color: #fff;
             border: 1px solid rgba(165,170,222,0.15);
+        }
+        .system-msg {
+            align-self: center;
+            background-color: transparent !important;
+            color: var(--text-gray) !important;
+            font-size: 12px;
+            text-align: center;
+            border: none !important;
+            padding: 5px;
+            white-space: pre-wrap;
+            border-top: 1px dashed rgba(165,170,222,0.2) !important;
+            border-bottom: 1px dashed rgba(165,170,222,0.2) !important;
+            border-radius: 0;
+            margin: 10px 0;
+            max-width: 90%;
+        }
+        .msg-meta {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            text-align: right;
+            margin-top: 4px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-msg .msg-meta {
+            color: rgba(0,0,0,0.6);
+        }
+        [data-theme="dark"] .user-msg .msg-meta { 
+            color: rgba(255,255,255,0.8); 
         }
         .chat-input-box {
             display: flex;
@@ -2133,7 +2105,7 @@
             <div class="spin-title">Withdrawal History</div>
         </div>
         <div id="history-list-container" style="padding: 0 10px; width: 100%; max-width: 340px; margin: 0 auto; padding-bottom: 20px;">
-            </div>
+        </div>
     </div>
 
     <div id="chat-screen" class="hidden">
@@ -2223,7 +2195,6 @@
                 </div>
                 <div class="menu-item-arrow">→</div>
             </div>
-            
             <div class="profile-menu-item" onclick="showScreen('history-screen'); closeProfileSlide();">
                 <div class="menu-item-left">
                     <svg class="profile-list-icon icon-history" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2231,7 +2202,6 @@
                 </div>
                 <div class="menu-item-arrow">→</div>
             </div>
-            
             <div class="profile-menu-item" onclick="showScreen('settings-screen'); closeProfileSlide();">
                 <div class="menu-item-left">
                     <svg class="profile-list-icon icon-settings" viewBox="0 0 24 24" fill="none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -2245,7 +2215,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
-        // --- ADDED serverTimestamp and orderBy TO IMPORTS ---
         import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, onSnapshot, getDocs, query, where, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -2298,7 +2267,6 @@
         window.sliderCurrentX = 0; 
         window.selectedItemRawCost = 0;
         
-        // CHAT GLOBALS
         window.activeRequestId = null;
         window.selectedImageData = null;
         let chatUnsubscribe = null;
@@ -2455,7 +2423,8 @@
             try {
                 window.currentCoins -= window.selectedItemRawCost; 
                 await updateDoc(doc(db, "users", window.activeTelegramId.toString()), { coins: window.currentCoins });
-                await addDoc(collection(db, "redeem_requests"), { 
+                
+                let reqRef = await addDoc(collection(db, "redeem_requests"), { 
                     telegram_id: window.activeTelegramId, 
                     username: window.activeUsername, 
                     whatsapp: userContactVal, 
@@ -2464,6 +2433,13 @@
                     timestamp: new Date().toISOString(), 
                     status: "Pending" 
                 });
+
+                await addDoc(collection(db, "chats", window.activeTelegramId.toString(), "requests", reqRef.id.toString(), "messages"), {
+                    text: `📦 Redeem Request Submitted\n\nItem: ${itemName}\nCoins: ${window.selectedItemRawCost.toLocaleString()}\nStatus: Pending\n\nPlease check my request. Expected review time: 24-48 hours.`,
+                    sender: "system",
+                    timestamp: serverTimestamp()
+                });
+
                 window.updateCoinsDisplay(); 
                 alert(`Success! Redeemed ${itemName}.`); 
                 document.getElementById('detail-contact-input').value = ""; 
@@ -2754,9 +2730,6 @@
             }
         };
 
-        // ==========================================
-        // FIXED SUPPORT CHAT LOGIC (ADMIN PANEL COMPATIBLE)
-        // ==========================================
         window.openSupportChat = function(requestId) {
             window.activeRequestId = requestId.toString();
             window.showScreen('chat-screen');
@@ -2769,7 +2742,7 @@
 
             if (chatUnsubscribe) chatUnsubscribe(); 
 
-            const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "messages");
+            const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId.toString(), "messages");
             const q = query(chatRef, orderBy("timestamp", "asc"));
 
             chatUnsubscribe = onSnapshot(q, (snapshot) => {
@@ -2785,17 +2758,25 @@
 
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const isUser = (data.sender === "user");
+                    const sender = data.sender || "user";
+                    const isSystem = sender === "system";
 
                     const msgDiv = document.createElement("div");
-                    msgDiv.className = isUser ? "msg user-msg" : "msg admin-msg";
+                    
+                    if (isSystem) {
+                        msgDiv.className = "msg system-msg";
+                    } else if (sender === "user") {
+                        msgDiv.className = "msg user-msg";
+                    } else {
+                        msgDiv.className = "msg admin-msg";
+                    }
 
-                    if (lastSender === data.sender) {
+                    if (lastSender === sender && !isSystem) {
                         msgDiv.style.marginTop = "2px";
                     } else {
                         msgDiv.style.marginTop = lastSender === null ? "0px" : "14px";
                     }
-                    lastSender = data.sender; 
+                    lastSender = sender; 
 
                     if (data.text) {
                         const p = document.createElement("div");
@@ -2808,6 +2789,20 @@
                         img.src = data.image;
                         img.className = "chat-img-attachment";
                         msgDiv.appendChild(img);
+                    }
+
+                    if (!isSystem) {
+                        const metaDiv = document.createElement("div");
+                        metaDiv.className = "msg-meta";
+                        let timeString = "";
+                        if (data.timestamp) {
+                            const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date();
+                            timeString = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        } else {
+                            timeString = "Sending...";
+                        }
+                        metaDiv.innerHTML = `<span>${timeString}</span>` + (sender === "user" ? `<span>✓✓</span>` : ``);
+                        msgDiv.appendChild(metaDiv);
                     }
 
                     container.appendChild(msgDiv);
@@ -2848,15 +2843,14 @@
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
 
-            if (!text && !window.selectedImageData) return; // Ignore if empty
+            if (!text && !window.selectedImageData) return; 
 
             input.value = "";
             const imageDataToSave = window.selectedImageData;
             window.clearPreview();
 
             try {
-                // Directly send to chats/{userId}/messages (matching Admin Panel)
-                const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "messages");
+                const chatRef = collection(db, "chats", window.activeTelegramId.toString(), "requests", window.activeRequestId.toString(), "messages");
                 await addDoc(chatRef, {
                     text: text,
                     image: imageDataToSave,
@@ -3160,7 +3154,7 @@
         };
 
         window.onload = function() { 
-            window.loadSavedTheme(); // Load Theme on Startup
+            window.loadSavedTheme(); 
             window.initSliderEngine(); 
             window.syncUserProfile(); 
             window.listenToUserUpdates(); 
