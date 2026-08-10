@@ -2115,6 +2115,14 @@
                 <div class="spin-title">Support Chat</div>
             </div>
 
+            <div id="chat-timer-banner" style="display:none; background: rgba(0, 212, 255, 0.12); border-bottom: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 8px; font-size: 13px; font-weight: bold; text-align: center;">
+                ⏱️ <span id="chat-timer-text">Chat closes in --:--</span>
+            </div>
+
+            <div id="chat-closed-banner" style="display:none; background: rgba(255, 68, 68, 0.12); border-bottom: 1px solid #ff4444; color: #ff4444; padding: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+                🔒 Chat is closed for this request.
+            </div>
+
             <div id="messages-container" class="messages-container">
                 <p style="text-align:center; color:var(--text-gray); margin-top:20px;">Loading messages...</p>
             </div>
@@ -2269,6 +2277,7 @@
         
         window.activeRequestId = null;
         window.selectedImageData = null;
+        window.chatTimerInterval = null;
         let chatUnsubscribe = null;
         
         window.rewards = [650, 800, 900, 450, 1000, 100, 250, 500, 300, 350, 400]; 
@@ -2435,13 +2444,13 @@
                 });
 
                 await addDoc(collection(db, "chats", window.activeTelegramId.toString(), "requests", reqRef.id.toString(), "messages"), {
-                    text: `📦 Redeem Request Submitted\n\nItem: ${itemName}\nCoins: ${window.selectedItemRawCost.toLocaleString()}\nStatus: Pending\n\nPlease check my request. Expected review time: 24-48 hours.`,
+                    text: `📦 Redeem Request Submitted\n\nItem: ${itemName}\nCoins: ${window.selectedItemRawCost.toLocaleString()}\nStatus: Pending`,
                     sender: "system",
                     timestamp: serverTimestamp()
                 });
 
                 window.updateCoinsDisplay(); 
-                alert(`Success! Redeemed ${itemName}.`); 
+                alert(`Success! Request Submitted ${itemName}.`); 
                 document.getElementById('detail-contact-input').value = ""; 
                 window.showScreen('withdraw-screen');
             } catch (e) { 
@@ -2734,6 +2743,87 @@
             window.activeRequestId = requestId.toString();
             window.showScreen('chat-screen');
             window.loadChatMessages();
+            window.checkAndSetupChatTimer(requestId);
+        };
+
+        window.checkAndSetupChatTimer = async function(requestId) {
+            const timerBanner = document.getElementById('chat-timer-banner');
+            const timerText = document.getElementById('chat-timer-text');
+            const closedBanner = document.getElementById('chat-closed-banner');
+            const inputBox = document.querySelector('.chat-input-box');
+            const previewBox = document.getElementById('image-preview-container');
+
+            if (window.chatTimerInterval) {
+                clearInterval(window.chatTimerInterval);
+                window.chatTimerInterval = null;
+            }
+
+            if (timerBanner) timerBanner.style.display = 'none';
+            if (closedBanner) closedBanner.style.display = 'none';
+            if (inputBox) inputBox.style.display = 'flex';
+
+            try {
+                const reqDoc = await getDoc(doc(db, "redeem_requests", requestId.toString()));
+                if (!reqDoc.exists()) return;
+
+                const reqData = reqDoc.data();
+                const status = reqData.status || "Pending";
+
+                if (status.toLowerCase() === "pending") {
+                    if (inputBox) inputBox.style.display = 'flex';
+                    return;
+                }
+
+                let statusTime = null;
+                if (reqData.statusTimestamp && reqData.statusTimestamp.toDate) {
+                    statusTime = reqData.statusTimestamp.toDate().getTime();
+                } else if (reqData.timestamp) {
+                    statusTime = new Date(reqData.timestamp).getTime();
+                }
+
+                if (!statusTime) {
+                    if (inputBox) inputBox.style.display = 'none';
+                    if (closedBanner) closedBanner.style.display = 'block';
+                    return;
+                }
+
+                const now = Date.now();
+                const elapsedSeconds = Math.floor((now - statusTime) / 1000);
+                const totalAllowedSeconds = 3600;
+
+                if (elapsedSeconds >= totalAllowedSeconds) {
+                    if (inputBox) inputBox.style.display = 'none';
+                    if (previewBox) previewBox.style.display = 'none';
+                    if (closedBanner) closedBanner.style.display = 'block';
+                } else {
+                    let remaining = totalAllowedSeconds - elapsedSeconds;
+                    if (inputBox) inputBox.style.display = 'flex';
+                    if (timerBanner) timerBanner.style.display = 'block';
+
+                    const updateTimer = () => {
+                        if (remaining <= 0) {
+                            clearInterval(window.chatTimerInterval);
+                            window.chatTimerInterval = null;
+                            if (timerBanner) timerBanner.style.display = 'none';
+                            if (inputBox) inputBox.style.display = 'none';
+                            if (previewBox) previewBox.style.display = 'none';
+                            if (closedBanner) closedBanner.style.display = 'block';
+                            return;
+                        }
+                        let m = Math.floor(remaining / 60);
+                        let s = remaining % 60;
+                        let mStr = m < 10 ? '0' + m : m;
+                        let sStr = s < 10 ? '0' + s : s;
+                        if (timerText) timerText.innerText = `Chat closes in ${mStr}:${sStr}`;
+                        remaining--;
+                    };
+
+                    updateTimer();
+                    window.chatTimerInterval = setInterval(updateTimer, 1000);
+                }
+            } catch (err) {
+                console.error("Timer setup error:", err);
+            }
         };
 
         window.loadChatMessages = function() {
@@ -2777,6 +2867,16 @@
                         msgDiv.style.marginTop = lastSender === null ? "0px" : "14px";
                     }
                     lastSender = sender; 
+
+                    if (isSystem && data.timestamp) {
+                        const sysTime = document.createElement("div");
+                        sysTime.style.fontSize = "10px";
+                        sysTime.style.color = "var(--text-gray)";
+                        sysTime.style.marginBottom = "4px";
+                        const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date();
+                        sysTime.innerText = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        msgDiv.appendChild(sysTime);
+                    }
 
                     if (data.text) {
                         const p = document.createElement("div");
